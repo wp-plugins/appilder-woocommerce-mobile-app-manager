@@ -163,6 +163,9 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
             $return['show_shipping'] = 0;
             $return['shipping'] = array();
         }
+        if(empty($return['shipping']) || is_null($return['shipping']) || !is_array($return['shipping']))
+            $return['shipping'] = array();
+
         return $return;
     }
     private function getMethodsInArray($methods){

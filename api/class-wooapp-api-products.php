@@ -385,6 +385,12 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
             unset( $args['type'] );
         }
 
+        // relevanssi plugin fix
+        remove_filter('the_posts', 'relevanssi_query');
+        remove_filter('posts_request', 'relevanssi_prevent_default_request',10);
+        remove_filter('query_vars', 'relevanssi_query_vars');
+
+
         $query_args = $this->merge_query_args( $query_args, $args );
 //          print_r($query_args);
         $return_products  = new  WP_Query( $query_args );

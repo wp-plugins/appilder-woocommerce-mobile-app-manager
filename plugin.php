@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Appilder WooCommerce Mobile App Manager
+ * Plugin Name: WooCommerce Mobile App Manager
  * Plugin URI: https://appilder.com/woocommerce
- * Description: WooCommerce Mobile App Manager plugin is manager for managing android app created from <a href="https://appilder.com/woocommerce" target="_blank">woocommerceandroid.com</a>
- * Version: 1.4.1
- * Author: Appilder
- * Author URI: http://appilder.com
+ * Description: WooCommerce Mobile App Manager plugin is manager for managing android app created from <a href="https://woocommerceandroid.com" target="_blank">woocommerceandroid.com</a>
+ * Version: 1.4.2
+ * Author: Coffye Innovations
+ * Author URI: http://coffye.com
  * Requires at least: 3.8
  * Tested up to: 4.1
  *
@@ -25,8 +25,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         error_reporting(-1);
     }
     include_once('class-wooapp-api.php');
-    include_once('inc/update-checker.php');
-	$plugin_updates = new wooapp_wp_auto_update("1.4.1","https://appilder.com/woocommerce/plugin/update","woocommerce-mobile-app-manager/plugin.php");
+
+    /*
+        include_once('inc/update-checker.php');
+        $plugin_updates = new wooapp_wp_auto_update("1.4.1","https://appilder.com/woocommerce/plugin/update","woocommerce-mobile-app-manager/plugin.php");
+    */
 
 	$api = new WOOAPP_API();
     function getapi()
