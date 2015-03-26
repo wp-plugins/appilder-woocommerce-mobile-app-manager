@@ -10,6 +10,7 @@ class WOOAPP_API_Core_pushNotification {
         self::$services =array(
            self::$gcm => "GCM_Send"
         );
+
         add_action("wooapp_activate",array('pushNotification','createTable'));
         add_action("wooapp_uninstall",array('pushNotification','dropTable'));
         add_action( 'wp_ajax_send_push_notification_to_app',array("pushNotification",'send_push_notification_to_app'));
