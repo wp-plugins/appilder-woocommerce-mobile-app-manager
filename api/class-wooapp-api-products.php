@@ -441,6 +441,8 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 // 'categories'         => wp_get_post_terms( $product->id, 'product_cat', array( 'fields' => 'names' ) ),
                 // 'tags'               => wp_get_post_terms( $product->id, 'product_tag', array( 'fields' => 'names' ) ),
                 'featured_src'       => $image,
+                //@todo Make this selectable from dashboard
+                'attributes'         => $this->get_attributes( $product ,true),
             );
         }else{
             $return = array(
@@ -639,16 +641,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
 
         // set a placeholder image if the product has no images set
         if ( empty( $images ) ) {
-
-            $images[] = array(
-                'id'         => 0,
-                'created_at' => $this->server->format_datetime( time() ), // default to now
-                'updated_at' => $this->server->format_datetime( time() ),
-                'src'        => WC_placeholder_img_src(),
-                'title'      => __( 'Placeholder', 'woocommerce_mobapp' ),
-                'alt'        => __( 'Placeholder', 'woocommerce_mobapp' ),
-                'position'   => 0,
-            );
+            $images[] = WC_placeholder_img_src();
         }
 
         return $images;

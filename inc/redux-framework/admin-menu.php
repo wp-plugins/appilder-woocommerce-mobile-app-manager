@@ -544,7 +544,7 @@ if (!class_exists('MobAPP_Admin_Menu_Config')) {
                 // TYPICAL -> Change these values as you need/desire
                 'opt_name'          => 'mobappSettings',            // This is where your data is stored in the database and also becomes your global variable name.
                 'display_name'      => "WooCommerce Mobile App Manager",     // Name that appears at the top of your panel
-                'display_version'   => "1.4.1 ",  // Version that appears at the top of your panel
+                'display_version'   => "1.4.3",  // Version that appears at the top of your panel
                 'menu_type'         => 'menu',                  //Specify if the admin menu should appear or not. Options: menu or submenu (Under appearance only)
                 'allow_sub_menu'    => true,                    // Show the sections below the admin menu item or not
                 'menu_title'        => __('Mobile App Manager', 'mobapp-settings-page'),
@@ -616,7 +616,7 @@ if (!class_exists('MobAPP_Admin_Menu_Config')) {
 
 
             $this->args['share_icons'][] = array(
-                'url'   => 'https://www.facebook.com/pages/WooCommerce-Android-App/713974451984945',
+                'url'   => 'https://www.facebook.com/appilder',
                 'title' => 'Like us on Facebook',
                 'icon'  => 'el-icon-facebook'
             );
@@ -628,7 +628,7 @@ if (!class_exists('MobAPP_Admin_Menu_Config')) {
                 } else {
                     $v = str_replace('-', '_', $this->args['opt_name']);
                 }
-                $this->args['intro_text'] = sprintf(__('<p>For creating  WooCommmerce mobile application  visit : <a target="_blank" href="http://woocommerceandroid.com">http://woocommerceandroid.com</a> |  <a target="_blank" href="http://woocommerceandroid.com/docs">Plugin Documentation</a> </p>', 'mobapp-settings-page'), $v);
+                $this->args['intro_text'] = sprintf(__('<p>For creating  WooCommmerce mobile application  visit : <a target="_blank" href="https://appilder.com/woocommerce/">https://appilder.com/woocommerce/</a> |  <a target="_blank" href="https://appilder.com/woocommerce/docs">Plugin Documentation</a> </p>', 'mobapp-settings-page'), $v);
             } else {
                 // $this->args['intro_text'] = __('<p>This text is displayed above the options panel. It isn\'t required, but more info is always better! The intro_text field accepts all HTML.</p>', 'mobapp-settings-page');
             }
