@@ -236,7 +236,10 @@ class WOOAPP_API_Core_pushNotification {
         global $wpdb;
         $sql = "SELECT COUNT(*) as items FROM ".self::$table."";
         $res = $wpdb->get_results($sql);
-        $total = $res[0]->items;
+        if(isset($res[0]))
+            $total = $res[0]->items;
+        else
+            $total = 0;
         return $total;
     }
 }
