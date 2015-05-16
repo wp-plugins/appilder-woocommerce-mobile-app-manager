@@ -11,11 +11,11 @@ class WOOAPP_API_Core_pushNotification {
            self::$gcm => "GCM_Send"
         );
 
-        add_action("wooapp_activate",array('pushNotification','createTable'));
-        add_action("wooapp_uninstall",array('pushNotification','dropTable'));
-        add_action( 'wp_ajax_send_push_notification_to_app',array("pushNotification",'send_push_notification_to_app'));
-        add_action( 'wp_ajax_action_notification_history_delete',array("pushNotification",'action_notification_history_delete'));
-        add_action( 'wp_ajax_action_getHistory',array("pushNotification",'action_getHistory'));
+        add_action("wooapp_activate",array('WOOAPP_API_Core_pushNotification','createTable'));
+        add_action("wooapp_uninstall",array('WOOAPP_API_Core_pushNotification','dropTable'));
+        add_action( 'wp_ajax_send_push_notification_to_app',array("WOOAPP_API_Core_pushNotification",'send_push_notification_to_app'));
+        add_action( 'wp_ajax_action_notification_history_delete',array("WOOAPP_API_Core_pushNotification",'action_notification_history_delete'));
+        add_action( 'wp_ajax_action_getHistory',array("WOOAPP_API_Core_pushNotification",'action_getHistory'));
     }
 
     /**
