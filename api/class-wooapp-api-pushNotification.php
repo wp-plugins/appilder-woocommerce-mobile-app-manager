@@ -66,9 +66,11 @@ class WOOAPP_API_pushNotification  extends WOOAPP_API_Resource {
      *  @todo Make proper Response
      */
     public function send($message,$title,$content,$actionType,$actionParam){
-        if (!is_a($this->pushNotification, "WOOAPP_API_Core_pushNotification"))
-            $this->pushNotification = new WOOAPP_API_Core_pushNotification();
-        $this->pushNotification->sendPush($message,$title,$actionType,$actionParam);
-        return array("status"=>1);
+        /*
+            if (!is_a($this->pushNotification, "WOOAPP_API_Core_pushNotification"))
+                $this->pushNotification = new WOOAPP_API_Core_pushNotification();
+            $this->pushNotification->sendPush($message,$title,$actionType,$actionParam);
+            return array("status"=>1);
+        */
     }
 } 
