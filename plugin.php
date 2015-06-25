@@ -3,11 +3,11 @@
  * Plugin Name: WooCommerce Mobile App Manager
  * Plugin URI: https://appilder.com/woocommerce
  * Description: WooCommerce Mobile App Manager plugin is manager for managing android app created from <a href="https://appilder.com/woocommerce" target="_blank">appilder.com/woocommerce</a>
- * Version: 1.4.4
+ * Version: 1.5
  * Author: Appilder
  * Author URI: http://appilder.com
  * Requires at least: 3.8
- * Tested up to: 4.1
+ * Tested up to: 4.2.2
  *
  */
 
@@ -24,6 +24,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         ini_set('display_startup_errors',1);
         error_reporting(-1);
     }
+
+    // header("Access-Control-Allow-Origin: *"); //@todo: Comment on production
+
     include_once('class-wooapp-api.php');
 
     /*
@@ -105,8 +108,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 		return array_merge(
 			array(
 				'settings' => '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=woocommerce-mobile-app-manager">Settings</a>',
-				'docs' => '<a target="_blank" href="http://woocommerceandroid.com/docs/">Docs</a>',
-				'create_app' => '<a target="_blank" href="https://woocommerceandroid.com/">Create App</a>' ),
+				'docs' => '<a target="_blank" href="https://appilder.com/woocommerce/docs/">Docs</a>',
+				'create_app' => '<a target="_blank" href="https://appilder.com/woocommerce/">Create App</a>' ),
 				$links
 		);
 	}

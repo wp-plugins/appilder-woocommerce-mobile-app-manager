@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once ABSPATH . 'wp-admin/includes/admin.php';
 
-class WOOAPP_API_Server {
+class WOOAPP_API_Server  {
 
 	const METHOD_GET    = 1;
 	const METHOD_POST   = 2;

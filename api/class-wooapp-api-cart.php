@@ -27,7 +27,13 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
     public function cart(){
         if(!isset($this->cart_object)){
              $this->cart_object = new WOOAPP_Cart();
-             WC()->customer->set_shipping_to_base();
+             WC()->cart = $this->cart_object;
+             $data = WC()->session->get('wc_shipping_calculate_details');
+             if(!empty($data)){
+                 $_POST = array_merge($_POST,$data);
+                 $this->calculate_shipping($data['calc_shipping_country'],$data['calc_shipping_state'],false);
+             }
+            // WC()->customer->set_shipping_to_base();
         }
         global $woocommerce;
         $woocommerce->cart = $this->cart_object;
@@ -71,6 +77,10 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
 
         $routes[ $this->base . '/coupon/remove' ] = array(
             array( array( $this, 'remove_coupon' ), WOOAPP_API_Server::METHOD_POST),
+        );
+
+        $routes[ $this->base . '/calculate_shipping' ] = array(
+            array( array( $this, 'calculate_shipping' ), WOOAPP_API_Server::METHOD_POST),
         );
 
         return $routes;
@@ -126,12 +136,13 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
      */
     public function get_cart_items($shipping_methods=array()){
         $chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
-        if ( isset($shipping_methods) && is_array( $shipping_methods) && !empty($shipping_methods))
-            foreach ( $shipping_methods as $i => $value )
-                $chosen_shipping_methods[ $i ] = wc_clean( $value );
+        if ( isset($shipping_methods) && is_array( $shipping_methods) && !empty($shipping_methods)) {
+            foreach ($shipping_methods as $i => $value) {
+                $chosen_shipping_methods[$i] = wc_clean($value);
+            }
+        }
         WC()->session->set( 'chosen_shipping_methods', $chosen_shipping_methods );
         $this->cart()->calculate_totals();
-
         $cart = $this->cart()->get_cart_api(); //  get_user_meta(get_current_user_id(), '_woocommerce_persistent_cart',true);
         $return['cart'] = array();
         if(!empty($cart)){
@@ -293,6 +304,43 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
             $return = $this->get_cart_items();
         }
        return $return;
+    }
+    public function calculate_shipping($calc_shipping_country,$calc_shipping_state,$has_to_return = true){
+        $return = [];
+        $data = ['calc_shipping_country'=>$calc_shipping_country,'calc_shipping_state'=>$calc_shipping_state];
+        try {
+             if(apply_filters( 'woocommerce_shipping_calculator_enable_postcode', true ) && !isset($_POST['calc_shipping_postcode'])){
+                 $return = WOOAPP_API_Error::setError($return,"missing_parameter","Missing parameter calc_shipping_postcode");
+             }elseif(isset($_POST['calc_shipping_postcode']))
+                 $data['calc_shipping_postcode'] = $_POST['calc_shipping_postcode'];
+             else
+                 $data['calc_shipping_postcode'] = '';
+
+             if(apply_filters( 'woocommerce_shipping_calculator_enable_city', false)  && !isset($_POST['calc_shipping_city'])){
+                 $return = WOOAPP_API_Error::setError($return,"missing_parameter","Missing parameter calc_shipping_city");
+             }elseif(isset($_POST['calc_shipping_city']))
+                 $data['calc_shipping_city'] = $_POST['calc_shipping_city'];
+             else
+                 $data['calc_shipping_city'] = '';
+
+             if(!is_wooapp_api_error($return))
+                 WC_Shortcode_Cart::calculate_shipping();
+        }catch (Exception $e){
+            $return = WOOAPP_API_Error::setError("unable_to_process","Unable to process");
+        }
+        if($this->get_wp_notices_error() !== false){
+            $return = $this->get_wp_notices_error();
+        }
+
+        if(!is_wooapp_api_error($return)  && $has_to_return){
+            WC()->session->set('wc_shipping_calculate_details',$data);
+            $return= $this->get_shipping_methods();
+            $return['status'] =1;
+        }
+        if($has_to_return)
+            return $return;
+        else
+            return true;
     }
     public function __destruct(){
         wc_clear_notices();
