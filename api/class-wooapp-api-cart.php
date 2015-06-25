@@ -32,6 +32,7 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
              if(!empty($data)){
                  $_POST = array_merge($_POST,$data);
                  $this->calculate_shipping($data['calc_shipping_country'],$data['calc_shipping_state'],false);
+                 $this->set_shipping_method();
              }
             // WC()->customer->set_shipping_to_base();
         }
@@ -123,6 +124,28 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
     }
 
     /**
+     * @param bool|array $shipping_methods
+     */
+    public function set_shipping_method($shipping_methods=false){
+        if(empty($shipping_methods) && isset($_POST['shipping_methods']))
+            $shipping_methods = $_POST['shipping_methods'];
+        elseif(empty($shipping_methods) && isset($_GET['shipping_methods']))
+            $shipping_methods = $_GET['shipping_methods'];
+
+        if(empty($shipping_methods))
+            $shipping_methods =  WC()->session->get( 'wc_chosen_shipping_methods', $shipping_methods );
+
+        $chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
+        if ( isset($shipping_methods) && is_array( $shipping_methods) && !empty($shipping_methods)) {
+            foreach ($shipping_methods as $i => $value) {
+                $chosen_shipping_methods[$i] = wc_clean($value);
+            }
+            WC()->session->set( 'wc_chosen_shipping_methods', $shipping_methods );
+            WC()->session->set( 'chosen_shipping_methods', $chosen_shipping_methods );
+        }
+    }
+
+    /**
      * Get all orders
      *
      * @since 2.1
@@ -135,13 +158,7 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
      * @return array
      */
     public function get_cart_items($shipping_methods=array()){
-        $chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
-        if ( isset($shipping_methods) && is_array( $shipping_methods) && !empty($shipping_methods)) {
-            foreach ($shipping_methods as $i => $value) {
-                $chosen_shipping_methods[$i] = wc_clean($value);
-            }
-        }
-        WC()->session->set( 'chosen_shipping_methods', $chosen_shipping_methods );
+        $this->set_shipping_method($shipping_methods);
         $this->cart()->calculate_totals();
         $cart = $this->cart()->get_cart_api(); //  get_user_meta(get_current_user_id(), '_woocommerce_persistent_cart',true);
         $return['cart'] = array();

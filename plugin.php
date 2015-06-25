@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Mobile App Manager
  * Plugin URI: https://appilder.com/woocommerce
  * Description: WooCommerce Mobile App Manager plugin is manager for managing android app created from <a href="https://appilder.com/woocommerce" target="_blank">appilder.com/woocommerce</a>
- * Version: 1.5
+ * Version: 1.5.1
  * Author: Appilder
  * Author URI: http://appilder.com
  * Requires at least: 3.8
@@ -14,7 +14,7 @@
 /**
  * Check if woocommerce is active
  **/
-if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins'))) || is_multisite()) {
     // Init API
     global $api,$mobappSettings;
     $debug_mode = isset($mobappSettings['mobappSettings'])?$mobappSettings['mobappSettings']:false;
