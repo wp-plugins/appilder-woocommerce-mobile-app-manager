@@ -544,7 +544,7 @@ if (!class_exists('MobAPP_Admin_Menu_Config')) {
                 // TYPICAL -> Change these values as you need/desire
                 'opt_name'          => 'mobappSettings',            // This is where your data is stored in the database and also becomes your global variable name.
                 'display_name'      => "WooCommerce Mobile App Manager",     // Name that appears at the top of your panel
-                'display_version'   => "1.4.4",  // Version that appears at the top of your panel
+                'display_version'   => "1.5",  // Version that appears at the top of your panel
                 'menu_type'         => 'menu',                  //Specify if the admin menu should appear or not. Options: menu or submenu (Under appearance only)
                 'allow_sub_menu'    => true,                    // Show the sections below the admin menu item or not
                 'menu_title'        => __('Mobile App Manager', 'mobapp-settings-page'),

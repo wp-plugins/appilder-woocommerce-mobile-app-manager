@@ -85,6 +85,7 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
         return $return;
     }
 	public  function get_available_payment_gateways( ) {
+        getapi()->WOOAPP_API_Cart->cart()->calculate_totals();
         $available_payment_gateways = WC()->payment_gateways()->get_available_payment_gateways();
 	    $return = array();
 	    foreach($available_payment_gateways as $key => $gateway){
@@ -105,7 +106,7 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
         if(is_wooapp_api_error($customer))
             return $customer;
         $return = array_merge($return,$customer);
-        getapi()->WOOAPP_API_Cart->cart()->calculate_totals();
+
         if ( wc_get_page_id( 'terms' ) > 0 && apply_filters( 'woocommerce_checkout_show_terms', true ) ) {
             $terms_is_checked = apply_filters( 'woocommerce_terms_is_checked_default', isset( $_POST['terms'] ) );
             $return['terms'] = array(
@@ -128,7 +129,7 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
         try{
             define("DOING_AJAX",true);
             require_once("woocommerce-extend/class-wooapp-checkout.php");
-            if(isset($_POST['ship_to_different_address']) && ($_POST['ship_to_different_address']===false || $_POST['ship_to_different_address']==="false" || $_POST['ship_to_different_address']===0)){
+            if(isset($_POST['ship_to_different_address']) && ($_POST['ship_to_different_address']===false || $_POST['ship_to_different_address']==="false" || $_POST['ship_to_different_address']==0)){
                 unset($_POST['ship_to_different_address']);
                 $_POST['shipping_first_name'] = '';
                 $_POST['shipping_last_name'] = '';

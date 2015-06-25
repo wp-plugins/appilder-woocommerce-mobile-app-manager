@@ -14,14 +14,14 @@ jQuery( document ).ready(
            jQuery('.send-success-notification').hide();
            e.preventDefault();
            var but = jQuery(this);
-
+f
             but.html("Sending...");
             but.attr("disabled","disabled");
 
            var parent = jQuery(this).parents("table");
           //  var media_id =  jQuery(parent).find("input[name='mobappSettings[opt-push-media][id]']").val();
-           var title =  jQuery(parent).find(".wooAppPushNotify_Title").val();
-           var message =  jQuery(parent).find(".wooAppPushNotify_Message").val();
+           var title =  jQuery(parent).find("input.wooAppPushNotify_Title").val();
+           var message =  jQuery(parent).find("textarea.wooAppPushNotify_Message").val();
            var action =  jQuery(parent).find(".wooAppPushNotify_Action").find(".widget-action-selector").val();
            if(action=='go_to_url')
                var action_value =  jQuery(parent).find(".wooAppPushNotify_Action > .widget-action-value-field").find("input,select").val();

@@ -695,7 +695,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                         $variations = array();
 
                     foreach ($options as $key => $option) {
-                        $is_variation = (in_array(sanitize_title($option),$variations))?true:false;
+                        $is_variation = preg_grep( "/".sanitize_title($option)."/i" , $variations )?true:false;
                         $options[$key] = array(
                             'id' => sanitize_title($option),
                             'is_variation' => $is_variation,
