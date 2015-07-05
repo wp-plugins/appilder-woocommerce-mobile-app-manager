@@ -14,7 +14,6 @@ jQuery( document ).ready(
            jQuery('.send-success-notification').hide();
            e.preventDefault();
            var but = jQuery(this);
-f
             but.html("Sending...");
             but.attr("disabled","disabled");
 
