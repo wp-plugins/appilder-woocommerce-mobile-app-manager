@@ -118,7 +118,7 @@ if (!class_exists('widget_handler')) {
             }
                     $class = isset($field['class'])?$field['class']:'';
                     $multi = (isset($field['multi']) && $field['multi'])?'multiple="multiple"':'';
-                    echo "<select class='$class' $multi data-placeholder='Select a page'>";
+                    echo "<select class='$class' $multi data-placeholder='Select a page' name='__toReplace' id='__toReplace'>";
                     echo "<option></option>";
                     foreach($pages as $id=>$page){
 	                        if(isset($value) && $id==$value) $selected = "selected='selected'"; else $selected = "";

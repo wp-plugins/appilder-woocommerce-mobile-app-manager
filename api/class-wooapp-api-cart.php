@@ -323,8 +323,8 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
        return $return;
     }
     public function calculate_shipping($calc_shipping_country,$calc_shipping_state,$has_to_return = true){
-        $return = [];
-        $data = ['calc_shipping_country'=>$calc_shipping_country,'calc_shipping_state'=>$calc_shipping_state];
+        $return = array();
+        $data = array('calc_shipping_country'=>$calc_shipping_country,'calc_shipping_state'=>$calc_shipping_state);
         try {
              if(apply_filters( 'woocommerce_shipping_calculator_enable_postcode', true ) && !isset($_POST['calc_shipping_postcode'])){
                  $return = WOOAPP_API_Error::setError($return,"missing_parameter","Missing parameter calc_shipping_postcode");
