@@ -2,7 +2,7 @@
 Tags: appilder,woocommerce,mobile,native,app,android,ios
 Requires at least: 3.8
 Tested up to: 4.2.2
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 
 This Plugin is used to manage native mobile app created for your woocommerce store at https://appilder.com/woocommerce/
 
@@ -21,3 +21,8 @@ Install our Appilder WooCommerce Mobile App Manager Plugin on your WooCommerce a
 Install the plugin and start managing your app. Read more about the plugin usage on documentation.
 
 https://appilder.com/woocommerce/docs
+
+== Changelog ==
+
+= 1.5.3 =
+Array declaration fixed to work with PHP version < 5.5
