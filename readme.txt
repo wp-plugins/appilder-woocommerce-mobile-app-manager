@@ -23,8 +23,8 @@ Install the plugin and start managing your app. Read more about the plugin usage
 https://appilder.com/woocommerce/docs
 == Screenshots ==
 
-1.Plugin Interface from where app can dynamically updated
-2.Android & iOS App Screenshots
+1. Plugin Interface from where app can dynamically updated
+2. Android & iOS App Screenshots
 
 == Changelog ==
 
