@@ -52,6 +52,7 @@ class ReduxFramework_nav_menu_builder
             'desc'     => __('Basic media uploader with disabled URL input field.', 'redux-framework-demo'),
             'subtitle' => __('Upload any media using the WordPress native uploader', 'redux-framework-demo'),
         ),'',$this->parent);
+        $this->media_field->enqueue();
     }
     function getType($key){
         return isset($this->types[$key])?$this->types[$key]:'';
@@ -278,7 +279,7 @@ class ReduxFramework_nav_menu_builder
         wp_enqueue_script(
             'jquery-nested-cat-sortable-js',
             plugins_url('jquery.mjs.nestedSortable.js',__FILE__),
-            array('jquery'),
+            array('jquery','jquery-ui-accordion'),
             time(),
             true
         );

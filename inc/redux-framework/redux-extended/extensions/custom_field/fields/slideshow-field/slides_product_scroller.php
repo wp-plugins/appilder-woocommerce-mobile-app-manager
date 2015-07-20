@@ -176,6 +176,7 @@ if (!class_exists('ReduxFramework_slides_product_scroller')) {
                 time(),
                 true
             );
+            /*
             wp_enqueue_script(
                 'select2-js',
                 ReduxFramework::$_url . 'assets/js/vendor/select2/select2.js',
@@ -190,6 +191,16 @@ if (!class_exists('ReduxFramework_slides_product_scroller')) {
                 time(),
                 true
             );
+            */
+
+            Redux_CDN::enqueue_script(
+                'select2-js',
+                '//cdn.jsdelivr.net/select2/3.5.2/select2.min.js',
+                array( 'jquery', 'redux-select2-sortable-js' ),
+                '3.5.2',
+                true
+            );
+
             wp_enqueue_script(
                 'field-select-js',
                 ReduxFramework::$_url . 'inc/fields/select/field_select.js',

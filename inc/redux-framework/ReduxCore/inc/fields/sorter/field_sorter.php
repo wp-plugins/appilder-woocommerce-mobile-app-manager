@@ -39,6 +39,38 @@
                 $this->value  = $value;
             }
 
+            private function replace_id_with_slug( $arr ) {
+                $new_arr = array();
+                if ( ! empty( $arr ) ) {
+                    foreach ( $arr as $id => $name ) {
+
+                        if ( is_numeric( $id ) ) {
+                            $slug = strtolower( $name );
+                            $slug = str_replace( ' ', '-', $slug );
+
+                            $new_arr[ $slug ] = $name;
+                        } else {
+                            $new_arr[ $id ] = $name;
+                        }
+                    }
+                }
+
+                return $new_arr;
+            }
+
+            private function is_value_empty( $val ) {
+                if ( ! empty( $val ) ) {
+                    foreach ( $val as $section => $arr ) {
+                        if ( ! empty( $arr ) ) {
+                            return false;
+                        }
+                    }
+                }
+
+
+                return true;
+            }
+
             /**
              * Field Render Function.
              * Takes the vars and outputs the HTML for the field in the settings
@@ -55,13 +87,8 @@
                     $this->field['args'] = array();
                 }
 
-                if ( isset( $this->field['data'] ) && ! empty( $this->field['data'] ) && is_array( $this->field['data'] ) ) {
-                    foreach ( $this->field['data'] as $key => $data ) {
-                        if ( ! isset( $this->field['args'][ $key ] ) ) {
-                            $this->field['args'][ $key ] = array();
-                        }
-                        $this->field['options'][ $key ] = $this->parent->get_wordpress_data( $data, $this->field['args'][ $key ] );
-                    }
+                if ( isset( $this->field['data'] ) ) {
+                    $this->field['options'] = $this->parent->options_defaults[ $this->field['id'] ];
                 }
 
                 // Make sure to get list of all the default blocks first
@@ -73,7 +100,18 @@
                     $temp = array_merge( $temp, $blocks );
                 }
 
+                if ( $this->is_value_empty( $this->value ) ) {
+                    if ( ! empty( $this->field['options'] ) ) {
+                        $this->value = $this->field['options'];
+                    }
+                }
+
                 $sortlists = $this->value;
+                if ( ! empty( $sortlists ) ) {
+                    foreach ( $sortlists as $section => $arr ) {
+                        $sortlists[ $section ] = $this->replace_id_with_slug( $arr );
+                    }
+                }
 
                 if ( is_array( $sortlists ) ) {
                     foreach ( $sortlists as $sortlist ) {
@@ -82,14 +120,24 @@
 
                     // now let's compare if we have anything missing
                     foreach ( $temp as $k => $v ) {
-                        if ( ! array_key_exists( $k, $temp2 ) ) {
-                            $sortlists['disabled'][ $k ] = $v;
+                        // k = id/slug
+                        // v = name
+
+                        if ( ! empty( $temp2 ) ) {
+                            if ( ! array_key_exists( $k, $temp2 ) ) {
+                                $sortlists['Disabled'][ $k ] = $v;
+                            }
                         }
                     }
 
                     // now check if saved blocks has blocks not registered under default blocks
                     foreach ( $sortlists as $key => $sortlist ) {
+                        // key = enabled, disabled, backup
+                        // sortlist = id => name
+
                         foreach ( $sortlist as $k => $v ) {
+                            // k = id
+                            // v = name
                             if ( ! array_key_exists( $k, $temp ) ) {
                                 unset( $sortlist[ $k ] );
                             }
@@ -104,7 +152,6 @@
                         }
                         $sortlists[ $key ] = $sortlist;
                     }
-
 
                     if ( $sortlists ) {
                         echo '<fieldset id="' . $this->field['id'] . '" class="redux-sorter-container redux-sorter">';
@@ -129,7 +176,8 @@
 
                                 if ( $key != "placebo" ) {
 
-                                    echo '<li id="' . $key . '" class="sortee">';
+                                    //echo '<li id="' . $key . '" class="sortee">';
+                                    echo '<li id="sortee-' . $key . '" class="sortee" data-id="' . $key . '">';
                                     echo '<input class="position ' . $this->field['class'] . '" type="hidden" name="' . $this->field['name'] . '[' . $group . '][' . $key . ']' . $this->field['name_suffix'] . '" value="' . $list . '">';
                                     echo $list;
                                     echo '</li>';
@@ -144,18 +192,20 @@
             }
 
             function enqueue() {
-
-                wp_enqueue_style(
-                    'redux-field-sorder-css',
-                    ReduxFramework::$_url . 'inc/fields/sorter/field_sorter.css',
-                    time(),
-                    true
-                );
+                if ( $this->parent->args['dev_mode'] ) {
+                    wp_enqueue_style(
+                        'redux-field-sorder-css',
+                        ReduxFramework::$_url . 'inc/fields/sorter/field_sorter.css',
+                        array(),
+                        time(),
+                        'all'
+                    );
+                }
 
                 wp_enqueue_script(
                     'redux-field-sorter-js',
                     ReduxFramework::$_url . 'inc/fields/sorter/field_sorter' . Redux_Functions::isMin() . '.js',
-                    array( 'jquery', 'redux-js' ),
+                    array( 'jquery', 'redux-js', 'jquery-ui-sortable' ),
                     time(),
                     true
                 );

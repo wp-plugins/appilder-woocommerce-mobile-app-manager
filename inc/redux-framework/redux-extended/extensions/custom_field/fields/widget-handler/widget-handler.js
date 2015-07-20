@@ -5,6 +5,7 @@
 
 jQuery(document).ready(function () {
     // update_action_value(jQuery(""))
+    jQuery(".select2-sortable").select2Sortable();
     jQuery('.remove-slider-remove').live('click', function () {
         var removeId =jQuery(this).attr("id").match(/\[items\]\[([0-9]+)\]\[slides\]/)[1];
         jQuery(this).parents("tr").hide("slow", function() { jQuery(this).remove();});
