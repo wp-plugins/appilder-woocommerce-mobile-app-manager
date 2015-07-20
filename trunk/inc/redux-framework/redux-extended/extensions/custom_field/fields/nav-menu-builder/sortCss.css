@@ -1,0 +1,47 @@
+ ol {
+			margin: 0;
+			padding: 0;
+			padding-left: 30px;
+		}
+
+		ol.sortable, ol.sortable ol {
+			margin: 0 0 0 25px;
+			padding: 0;
+			list-style-type: none;
+		}
+
+		ol.sortable {
+			/* margin: 4em 0; */
+		}
+
+		.sortable li {
+			margin: -5px 0 0 0;
+			padding: 0;
+		}
+
+		li.mjs-nestedSortable-collapsed.mjs-nestedSortable-hovering div {
+			border-color: #999;
+			background: #fafafa;
+		}
+
+		.disclose {
+			cursor: pointer;
+			width: 10px;
+			display: none;
+		}
+
+		.sortable li.mjs-nestedSortable-collapsed > ol {
+			display: none;
+		}
+
+		.sortable li.mjs-nestedSortable-branch > div > .disclose {
+			display: inline-block;
+		}
+
+		.sortable li.mjs-nestedSortable-collapsed > div > .disclose > span:before {
+			content: '+ ';
+		}
+
+		.sortable li.mjs-nestedSortable-expanded > div > .disclose > span:before {
+			content: '- ';
+		}
