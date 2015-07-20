@@ -15,22 +15,33 @@
     redux.field_objects.slides.init = function( selector ) {
 
         if ( !selector ) {
-            selector = $( document ).find( '.redux-container-slides' );
+            selector = $( document ).find( ".redux-group-tab:visible" ).find( '.redux-container-slides:visible' );
         }
 
         $( selector ).each(
             function() {
                 var el = $( this );
+
                 redux.field_objects.media.init(el);
+
                 var parent = el;
                 if ( !el.hasClass( 'redux-field-container' ) ) {
                     parent = el.parents( '.redux-field-container:first' );
                 }
+                if ( parent.is( ":hidden" ) ) { // Skip hidden fields
+                    return;
+                }
+                
+                if ( parent.hasClass( 'redux-container-slides' ) ) {
+                    parent.addClass( 'redux-field-init' );    
+                }
+                
                 if ( parent.hasClass( 'redux-field-init' ) ) {
                     parent.removeClass( 'redux-field-init' );
                 } else {
                     return;
                 }
+
                 el.find( '.redux-slides-remove' ).live(
                     'click', function() {
                         redux_change( $( this ) );
@@ -56,9 +67,11 @@
                     }
                 );
 
-                el.find( '.redux-slides-add' ).click(
+                //el.find( '.redux-slides-add' ).click(
+                el.find( '.redux-slides-add' ).off('click').click(
                     function() {
                         var newSlide = $( this ).prev().find( '.redux-slides-accordion-group:last' ).clone( true );
+
                         var slideCount = $( newSlide ).find( '.slide-title' ).attr( "name" ).match( /[0-9]+(?!.*[0-9])/ );
                         var slideCount1 = slideCount * 1 + 1;
 

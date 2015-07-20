@@ -51,12 +51,13 @@ if (!class_exists('widget_handler')) {
                 time(),
                 true
             );
-            wp_enqueue_style(
+        /*    wp_enqueue_style(
                 'redux-field-select2-css',
                 ReduxFramework::$_url . 'assets/js/vendor/select2/select2.css',
                 time(),
                 true
             );
+        */
         }
         public static function single_display($id,$callback){
             if((!isset($GLOBALS[$id]) || !$GLOBALS[$id])){
@@ -68,6 +69,9 @@ if (!class_exists('widget_handler')) {
         public  function widget_field($field_name,$hidden=true,$field=array(),$value=array()){
             $index = "widget_".$field_name;
             if(isset($field['multi']) && $field['multi']) $index.="_multi";
+            if(isset($field['sortable']) && $field['sortable']) {
+                $index .= "_sortable";
+            }
             $style = $hidden?"display:none;":"";
             if((!isset($GLOBALS[$index])  ||  !$GLOBALS[$index]) || !$hidden){
                 if($hidden) $GLOBALS[$index] = true;

@@ -8,28 +8,33 @@
 
     $( document ).ready(
         function() {
-            //redux.field_objects.slider.init();
+            
         }
     );
 
     redux.field_objects.slider.init = function( selector ) {
 
         if ( !selector ) {
-            selector = $( document ).find( '.redux-container-slider' );
+            selector = $( document ).find( ".redux-group-tab:visible" ).find( '.redux-container-slider:visible' );
         }
 
         $( selector ).each(
             function() {
                 var el = $( this );
                 var parent = el;
+                
                 if ( !el.hasClass( 'redux-field-container' ) ) {
                     parent = el.parents( '.redux-field-container:first' );
+                }
+                if ( parent.is( ":hidden" ) ) { // Skip hidden fields
+                    return;
                 }
                 if ( parent.hasClass( 'redux-field-init' ) ) {
                     parent.removeClass( 'redux-field-init' );
                 } else {
                     return;
                 }
+
                 el.find( 'div.redux-slider-container' ).each(
                     function() {
 
@@ -39,19 +44,19 @@
                         var DISPLAY_TEXT = 2;
                         var DISPLAY_SELECT = 3;
 
-                        var mainID = $( this ).data( 'id' );
-
-                        var minVal = $( this ).data( 'min' );
-                        var maxVal = $( this ).data( 'max' );
-                        var stepVal = $( this ).data( 'step' );
-                        var handles = $( this ).data( 'handles' );
-                        var defValOne = $( this ).data( 'default-one' );
-                        var defValTwo = $( this ).data( 'default-two' );
-                        var resVal = $( this ).data( 'resolution' );
-                        var displayValue = parseInt( ($( this ).data( 'display' )) );
-                        var rtlVal = Boolean( $( this ).data( 'rtl' ) );
-                        var floatMark = ($( this ).data( 'float-mark' ));
-
+                        var mainID          = $( this ).data( 'id' );
+                        var minVal          = $( this ).data( 'min' );
+                        var maxVal          = $( this ).data( 'max' );
+                        var stepVal         = $( this ).data( 'step' );
+                        var handles         = $( this ).data( 'handles' );
+                        var defValOne       = $( this ).data( 'default-one' );
+                        var defValTwo       = $( this ).data( 'default-two' );
+                        var resVal          = $( this ).data( 'resolution' );
+                        var displayValue    = parseInt( ($( this ).data( 'display' )) );
+                        var rtlVal          = Boolean( $( this ).data( 'rtl' ) );
+                        var floatMark       = ($( this ).data( 'float-mark' ));
+                        var forced          = Boolean($( this ).data( 'forced' ));
+                        
                         var rtl;
                         if ( rtlVal === true ) {
                             rtl = 'rtl';
@@ -70,14 +75,14 @@
 
                         var inputOne, inputTwo;
                         if ( displayValue == DISPLAY_TEXT ) {
-                            defClassOne = $( '.redux-slider-input-one-' + mainID );
-                            defClassTwo = $( '.redux-slider-input-two-' + mainID );
+                            defClassOne = el.find( '.redux-slider-input-one-' + mainID );
+                            defClassTwo = el.find( '.redux-slider-input-two-' + mainID );
 
                             inputOne = defClassOne;
                             inputTwo = defClassTwo;
                         } else if ( displayValue == DISPLAY_SELECT ) {
-                            defClassOne = $( '.redux-slider-select-one-' + mainID );
-                            defClassTwo = $( '.redux-slider-select-two-' + mainID );
+                            defClassOne = el.find( '.redux-slider-select-one-' + mainID );
+                            defClassTwo = el.find( '.redux-slider-select-two-' + mainID );
 
                             redux.field_objects.slider.loadSelect( defClassOne, minVal, maxVal, resVal, stepVal );
 
@@ -86,11 +91,11 @@
                             }
 
                         } else if ( displayValue == DISPLAY_LABEL ) {
-                            defClassOne = $( '#redux-slider-label-one-' + mainID );
-                            defClassTwo = $( '#redux-slider-label-two-' + mainID );
+                            defClassOne = el.find( '#redux-slider-label-one-' + mainID );
+                            defClassTwo = el.find( '#redux-slider-label-two-' + mainID );
                         } else if ( displayValue == DISPLAY_NONE ) {
-                            defClassOne = $( '.redux-slider-value-one-' + mainID );
-                            defClassTwo = $( '.redux-slider-value-two-' + mainID );
+                            defClassOne = el.find( '.redux-slider-value-one-' + mainID );
+                            defClassTwo = el.find( '.redux-slider-value-two-' + mainID );
                         }
 
                         var classOne, classTwo;
@@ -133,28 +138,29 @@
                                     if ( displayValue == DISPLAY_LABEL ) {
                                         if ( handles === 2 ) {
                                             var inpSliderVal = slider.val();
-                                            $( 'input.redux-slider-value-one-' + mainID ).attr(
+                                            el.find( 'input.redux-slider-value-one-' + mainID ).attr(
                                                 'value', inpSliderVal[0]
                                             );
-                                            $( 'input.redux-slider-value-two-' + mainID ).attr(
+                                            el.find( 'input.redux-slider-value-two-' + mainID ).attr(
                                                 'value', inpSliderVal[1]
                                             );
                                         } else {
-                                            $( 'input.redux-slider-value-one-' + mainID ).attr(
+                                            el.find( 'input.redux-slider-value-one-' + mainID ).attr(
                                                 'value', slider.val()
                                             );
                                         }
                                     }
 
                                     if ( displayValue == DISPLAY_SELECT ) {
-                                        $( '.redux-slider-select-one' ).select2( 'val', slider.val()[0] );
-
                                         if ( handles === 2 ) {
-                                            $( '.redux-slider-select-two' ).select2( 'val', slider.val()[1] );
+                                            el.find( '.redux-slider-select-one' ).select2( 'val', slider.val()[0] );
+                                            el.find( '.redux-slider-select-two' ).select2( 'val', slider.val()[1] );
+                                        } else {
+                                            el.find( '.redux-slider-select-one' ).select2( 'val', slider.val() );
                                         }
                                     }
 
-                                    redux_change( jQuery( this ).parents( '.redux-field-container:first' ).find( 'input' ) );
+                                    redux_change( $( this ).parents( '.redux-field-container:first' ).find( 'input' ) );
                                 }
                             }
                         );
@@ -218,7 +224,8 @@
                     default_params = $.extend( {}, default_params, select2_params );
                 }
 
-                $( 'select.redux-slider-select-one, select.redux-slider-select-two' ).select2( default_params );
+                el.find( 'select.redux-slider-select-one, select.redux-slider-select-two' ).select2( default_params );
+                
             }
         );
 
