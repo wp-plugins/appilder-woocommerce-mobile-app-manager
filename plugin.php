@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Mobile App Manager
  * Plugin URI: https://appilder.com/woocommerce
  * Description: WooCommerce Mobile App Manager plugin is manager for managing android app created from <a href="https://appilder.com/woocommerce" target="_blank">appilder.com/woocommerce</a>
- * Version: 1.5.3
+ * Version: 1.5.4
  * Author: Appilder
  * Author URI: http://appilder.com
  * Requires at least: 3.8
@@ -14,19 +14,14 @@
 /**
  * Check if woocommerce is active
  **/
+
+if (!defined('ABSPATH')) exit;
+define("APPILDER_WOOCOMMERCE_PLUGIN",true);
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins'))) || is_multisite()) {
     // Init API
-    global $api,$mobappSettings;
-    $debug_mode = isset($mobappSettings['mobappSettings'])?$mobappSettings['mobappSettings']:false;
-    if($debug_mode)
-    {
-        ini_set('display_errors',1);
-        ini_set('display_startup_errors',1);
-        error_reporting(-1);
-    }
-
+    global $api;
     // header("Access-Control-Allow-Origin: *"); //@todo: Comment on production
-
+    add_action('woocommerce_loaded','load_wooapp_plugin');
     include_once('class-wooapp-api.php');
 
     /*
@@ -78,10 +73,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             return $path;
     }
 
-    if(is_admin() ||  !empty($_GET['wooapp-api-route']) ||  !empty($_GET['wooapp-api'])) {
-        require_once('inc/redux-framework/redux.php');
-        include_once('inc/ajax-functions.php');
-        include_once('inc/push-notification/class.pushNotification.php');
+    if(is_admin()){
+     require_once('inc/post_meta.php');
+    }
+
+    function load_wooapp_plugin()
+    {
+        if (is_admin() || !empty($_GET['wooapp-api-route']) || !empty($_GET['wooapp-api'])) {
+            require_once('inc/redux-framework/redux.php');
+            include_once('inc/ajax-functions.php');
+            include_once('inc/push-notification/class.pushNotification.php');
+        }
     }
 
     function wooapp_activated() {

@@ -64,7 +64,7 @@
 
                 el.find('.redux-slideshow-add').click(function () {
                     var lastOne = jQuery(this).prev().find('.redux-slideshow-accordion-group:last');
-                   // jQuery(lastOne).find('.select2').select2("destroy");
+                    jQuery(lastOne).find('.select2').select2("destroy");
                     var newSlide = jQuery(lastOne).clone(true);
                     var slideCount = jQuery(newSlide).find('input[type="text"]').attr("name").match(/[0-9]+(?!.*[0-9])/);
                     var slideCount1 = slideCount*1 + 1;
@@ -96,11 +96,14 @@
                     jQuery(newSlide).find('.redux-slideshow-image').attr('src', '').removeAttr('id');
                     jQuery(newSlide).find('h3').text('').append('<span class="redux-slideshow-header">New item</span><span class="ui-accordion-header-icon ui-icon ui-icon-plus"></span>');
                     jQuery(this).prev().append(newSlide);
+                    jQuery(lastOne).find('.select2').select2();
                     // jQuery.reduxSelect.init();
                     if(jQuery(newSlide).find(".widget-search-action").length > 0)
                         window.update_search_cat_selector(jQuery(newSlide).find(".widget-search-action"));
-                    else
-                        jQuery(newSlide).find(".select2").select2("val","");
+                    else {
+                        jQuery(newSlide).find("select.select2").select2();
+                        jQuery(newSlide).find("select.select2").select2("val", "");
+                    }
                 });
 
                 el.find('.slide-title').keyup(function(event) {

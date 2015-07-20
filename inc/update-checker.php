@@ -1,5 +1,5 @@
 <?php
-
+if (!defined('ABSPATH')) exit;
 class wooapp_wp_auto_update {
     public $site_url;
 	/**

@@ -367,7 +367,11 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
             'fields'      => 'ids',
             'post_type'   => 'product',
             'post_status' => 'publish',
-            'meta_query'  => array(),
+            'meta_query'  => array(array(
+                'key' => '_visibility',
+                'value' => array('catalog', 'visible'),
+                'compare' => 'IN'
+            )),
         );
 
         if ( ! empty( $args['type'] ) ) {
@@ -407,7 +411,10 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
      */
     public  function get_product_data( $product ,$forlist = false ) {
         $short_desc= apply_filters( 'woocommerce_mobapp_short_description', $product->get_post_data()->post_excerpt);
-        $desc = apply_filters( 'plugin_description', $product->get_post_data()->post_content );
+        $desc  = metadata_exists( 'post', $product->id, 'wooapp_product_desc' ) ? get_post_meta( $product->id, 'wooapp_product_desc', true ) : false;
+        if(empty($desc) || $desc == false) {
+            $desc = apply_filters('plugin_description', $product->get_post_data()->post_content);
+        }
         $desc = empty($desc)?$short_desc:$desc;
         $desc = do_shortcode($desc);
         $short_desc = do_shortcode($short_desc);
@@ -426,8 +433,8 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 'regular_price'      => WC_format_decimal( $product->get_regular_price(), 2 ),
                 'sale_price'         => $product->get_sale_price() ? WC_format_decimal( $product->get_sale_price(), 2 ) : null,
                 'price_html'         => $product->get_price_html(),
-                'managing_stock'     => $product->managing_stock(),
-                'stock_quantity'     => (int) $product->get_stock_quantity(),
+                // 'managing_stock'     => $product->managing_stock(),
+                // 'stock_quantity'     => (int) $product->get_stock_quantity(),
                 'in_stock'           => $product->is_in_stock(),
                 'purchaseable'       => $product->is_purchasable(),
                 'featured'           => $product->is_featured(),
@@ -448,8 +455,8 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
             $return = array(
                 'title'              => $product->get_title(),
                 'id'                 => (int) $product->is_type( 'variation' ) ? $product->get_variation_id() : $product->id,
-                'created_at'         => $this->server->format_datetime( $product->get_post_data()->post_date_gmt ),
-                'updated_at'         => $this->server->format_datetime( $product->get_post_data()->post_modified_gmt ),
+                // 'created_at'         => $this->server->format_datetime( $product->get_post_data()->post_date_gmt ),
+                // 'updated_at'         => $this->server->format_datetime( $product->get_post_data()->post_modified_gmt ),
                 'type'               => $product->product_type,
                 'status'             => $product->get_post_data()->post_status,
                 'downloadable'       => $product->is_downloadable(),
@@ -460,15 +467,15 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 'regular_price'      => WC_format_decimal( $product->get_regular_price(), 2 ),
                 'sale_price'         => $product->get_sale_price() ? WC_format_decimal( $product->get_sale_price(), 2 ) : null,
                 'price_html'         => $product->get_price_html(),
-                'taxable'            => $product->is_taxable(),
-                'tax_status'         => $product->get_tax_status(),
-                'tax_class'          => $product->get_tax_class(),
-                'managing_stock'     => $product->managing_stock(),
-                'stock_quantity'     => (int) $product->get_stock_quantity(),
+               // 'taxable'            => $product->is_taxable(),
+               // 'tax_status'         => $product->get_tax_status(),
+               // 'tax_class'          => $product->get_tax_class(),
+                // 'managing_stock'     => $product->managing_stock(),
+                // 'stock_quantity'     => (int) $product->get_stock_quantity(),
                 'in_stock'           => $product->is_in_stock(),
-                'backorders_allowed' => $product->backorders_allowed(),
-                'backordered'        => $product->is_on_backorder(),
-                'sold_individually'  => $product->is_sold_individually(),
+                // 'backorders_allowed' => $product->backorders_allowed(),
+                // 'backordered'        => $product->is_on_backorder(),
+                // 'sold_individually'  => $product->is_sold_individually(),
                 'purchaseable'       => $product->is_purchasable(),
                 'featured'           => $product->is_featured(),
                 'visible'            => $product->is_visible(),
@@ -483,28 +490,28 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 ),
                 'shipping_required'  => $product->needs_shipping(),
                 'shipping_taxable'   => $product->is_shipping_taxable(),
-                'shipping_class'     => $product->get_shipping_class(),
-                'shipping_class_id'  => ( 0 !== $product->get_shipping_class_id() ) ? $product->get_shipping_class_id() : null,
+                // 'shipping_class'     => $product->get_shipping_class(),
+               // 'shipping_class_id'  => ( 0 !== $product->get_shipping_class_id() ) ? $product->get_shipping_class_id() : null,
                 'description'        => $desc,
                 'short_description'  => $short_desc,
                 'reviews_allowed'    => ( 'open' === $product->get_post_data()->comment_status ),
                 'average_rating'     => WC_format_decimal( $product->get_average_rating(), 2 ),
                 'rating_count'       => (int) $product->get_rating_count(),
                 'related_products'        => $this->ids_to_short_desc($product->get_related()) ,
-                'upsell_ids'         => array_map( 'absint', $product->get_upsells() ),
-                'cross_sell_ids'     => array_map( 'absint', $product->get_cross_sells() ),
-                'categories'         => wp_get_post_terms( $product->id, 'product_cat', array( 'fields' => 'names' ) ),
-                'tags'               => wp_get_post_terms( $product->id, 'product_tag', array( 'fields' => 'names' ) ),
+                // 'upsell_ids'         => array_map( 'absint', $product->get_upsells() ),
+                // 'cross_sell_ids'     => array_map( 'absint', $product->get_cross_sells() ),
+                // 'categories'         => wp_get_post_terms( $product->id, 'product_cat', array( 'fields' => 'names' ) ),
+                // 'tags'               => wp_get_post_terms( $product->id, 'product_tag', array( 'fields' => 'names' ) ),
                 'images'             => $this->get_images( $product ),
                 'featured_src'       => wp_get_attachment_url( get_post_thumbnail_id( $product->is_type( 'variation' ) ? $product->variation_id : $product->id ) ),
                 'attributes'         => $this->get_attributes( $product ,true),
                 'attributes_array'         => $this->get_attributes( $product),
                 'downloads'          => $this->get_downloads( $product ),
-                'download_limit'     => (int) $product->download_limit,
-                'download_expiry'    => (int) $product->download_expiry,
-                'download_type'      => $product->download_type,
-                'purchase_note'      => $product->purchase_note,
-                'total_sales'        => metadata_exists( 'post', $product->id, 'total_sales' ) ? (int) get_post_meta( $product->id, 'total_sales', true ) : 0,
+                // 'download_limit'     => (int) $product->download_limit,
+                // 'download_expiry'    => (int) $product->download_expiry,
+                // 'download_type'      => $product->download_type,
+                // 'purchase_note'      => $product->purchase_note,
+                // 'total_sales'        => metadata_exists( 'post', $product->id, 'total_sales' ) ? (int) get_post_meta( $product->id, 'total_sales', true ) : 0,
                 'variations'         => array(),
                 'parent'             => array(),
             );
@@ -515,7 +522,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
     }
     public  function ids_to_short_desc($ids){
         foreach($ids as $key=>$id){
-            $id =  get_product($id);
+            $id =  wc_get_product($id);
             $ids[$key] = $this->get_product_data( $id ,true);
         }
         return $ids;
