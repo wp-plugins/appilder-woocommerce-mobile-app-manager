@@ -28,7 +28,7 @@ https://appilder.com/woocommerce/docs
 
 == Changelog ==
 
-= 1.5.4 =
+= 1.6.0 =
 * Added option for Exclusive app only product description
 * Updated Redux Core to latest (New Feature Ajax Save)
 * Enabled Import/Export Settings option
