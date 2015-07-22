@@ -100,7 +100,7 @@ if (!class_exists('widget_handler')) {
                 $default = array(
                     'type' => 'select',
                     'data' => 'posts',
-                    'args' => array('post_type' => array('product'),'posts_per_page' => -1),
+                    'args' => array('post_type' => array('product'),'posts_per_page' => 400),
                 );
                 $field =  $this->widget_filed_args($default,$field);
                 $widget = new ReduxFramework_select($field,$value,$this->parent);

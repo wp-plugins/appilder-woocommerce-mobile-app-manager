@@ -449,7 +449,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 // 'tags'               => wp_get_post_terms( $product->id, 'product_tag', array( 'fields' => 'names' ) ),
                 'featured_src'       => $image,
                 //@todo Make this selectable from dashboard
-                'attributes'         => $this->get_attributes( $product ,true),
+                // 'attributes'         => $this->get_attributes( $product ,true),
             );
         }else{
             $return = array(
@@ -497,7 +497,6 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 'reviews_allowed'    => ( 'open' === $product->get_post_data()->comment_status ),
                 'average_rating'     => WC_format_decimal( $product->get_average_rating(), 2 ),
                 'rating_count'       => (int) $product->get_rating_count(),
-                'related_products'        => $this->ids_to_short_desc($product->get_related()) ,
                 // 'upsell_ids'         => array_map( 'absint', $product->get_upsells() ),
                 // 'cross_sell_ids'     => array_map( 'absint', $product->get_cross_sells() ),
                 // 'categories'         => wp_get_post_terms( $product->id, 'product_cat', array( 'fields' => 'names' ) ),
@@ -506,7 +505,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 'featured_src'       => wp_get_attachment_url( get_post_thumbnail_id( $product->is_type( 'variation' ) ? $product->variation_id : $product->id ) ),
                 'attributes'         => $this->get_attributes( $product ,true),
                 'attributes_array'         => $this->get_attributes( $product),
-                'downloads'          => $this->get_downloads( $product ),
+               // 'downloads'          => $this->get_downloads( $product ),
                 // 'download_limit'     => (int) $product->download_limit,
                 // 'download_expiry'    => (int) $product->download_expiry,
                 // 'download_type'      => $product->download_type,
@@ -514,6 +513,8 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 // 'total_sales'        => metadata_exists( 'post', $product->id, 'total_sales' ) ? (int) get_post_meta( $product->id, 'total_sales', true ) : 0,
                 'variations'         => array(),
                 'parent'             => array(),
+                'related_products'        => $this->ids_to_short_desc($product->get_related()),
+
             );
             if($product->is_type( 'external'))
                 $return["external_product"] = array("product_url"=>$product->get_product_url(),"button_text"=>$product->get_button_text());
@@ -681,13 +682,17 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
             }
 
         } else {
+            if($product->is_type( 'variable' ))
+                $variation_attrs = $product->get_variation_attributes();
+            else
+                $variation_attrs = array();
 
             foreach ( $product->get_attributes() as $attribute ) {
 
                 // taxonomy-based attributes are comma-separated, others are pipe (|) separated
-                if ( $attribute['is_taxonomy'] )
-                    $options = explode( ',', $product->get_attribute( $attribute['name'] ) );
-                else
+                if ( $attribute['is_taxonomy'] ) {
+                    $options = explode(',', $product->get_attribute($attribute['name']));
+                }                else
                     $options = explode( '|', $product->get_attribute( $attribute['name'] ) );
 
                 if($old_type) {
@@ -696,13 +701,17 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 }else{
 
                     if($product->is_type( 'variable' )) {
-                        $variations = $product->get_variation_attributes();
-                        $variations = isset($variations[$attribute['name']])?$variations[$attribute['name']]:array();
+                        $variations = isset($variation_attrs[$attribute['name']])?$variation_attrs[$attribute['name']]:array();
+                        $variations = array_map('sanitize_title',$variations);
                     }else
                         $variations = array();
 
                     foreach ($options as $key => $option) {
-                        $is_variation = preg_grep( "/".sanitize_title($option)."/i" , $variations )?true:false;
+                        if(empty($variations))
+                            $is_variation = false;
+                        else
+                           $is_variation = preg_grep( "/".sanitize_title($option)."/i" , $variations )?true:false;
+
                         $options[$key] = array(
                             'id' => sanitize_title($option),
                             'is_variation' => $is_variation,
@@ -710,9 +719,10 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                         );
                     }
                 }
+
                 $attributes[] = array(
                     'id'      => $attribute['name'] ,
-                    'name'      => wc_attribute_label($attribute['name']), //ucwords( str_replace( 'pa_', '', $attribute['name'] ) ),
+                    'name'      => wc_attribute_label($attribute['name']),
                     'position'  => $attribute['position'],
                     'visible'   => (bool) $attribute['is_visible'],
                     'variation' => (bool) $attribute['is_variation'],
