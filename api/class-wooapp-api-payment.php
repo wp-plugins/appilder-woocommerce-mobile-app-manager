@@ -42,6 +42,11 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
 		);
 
 		# GET /orders
+		$routes[ $this->base.'/checkout_fields' ] = array(
+			array( array( $this, 'checkout_fields' ),WOOAPP_API_Server::METHOD_GET ),
+		);
+
+		# GET /orders
 		$routes[ $this->base.'/allowed_country' ] = array(
 			array( array( $this, 'get_allowed_country_states' ),WOOAPP_API_Server::METHOD_GET ),
 		);
@@ -54,6 +59,35 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
 
 		return $routes;
 	}
+    public function checkout_fields($field){
+        $checkout = WC()->checkout;
+        $return = array("status"=>true,"items"=>array());
+        if(isset($checkout->checkout_fields[$field])) {
+           $return["items"] = array_map(array($this,'parse_field'),$checkout->checkout_fields[$field],array_keys($checkout->checkout_fields[$field]));
+        }else
+            $return['status'] = false;
+        return $return;
+    }
+    private function parse_field($args,$key){
+        $defaults = array(
+            'type'              => 'text',
+            'id'                => $key,
+            'label'             => '',
+            'description'       => '',
+            'placeholder'       => '',
+            'maxlength'         => false,
+            'required'          => false,
+            // 'class'             => array(), // 'label_class'       => array(),           // 'input_class'       => array(), // 'return'            => false,         // 'custom_attributes' => array(),
+            'options'           => array(),
+            'validate'          => array(),
+            'default'           => '',
+        );
+        $args = wp_parse_args( $args, $defaults );
+        if($args['type'] == "country") {
+            $args['options'] = ($key == 'shipping_country') ? WC()->countries->get_shipping_countries() : WC()->countries->get_allowed_countries();
+        }
+        return $args;
+    }
     public function  get_allowed_country_states(){
         $countries = WC()->countries->get_allowed_countries();
         $states_c =  WC()->countries->get_allowed_country_states();

@@ -193,8 +193,10 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
             $return['show_shipping'] = 0;
             $return['shipping'] = array();
         }
-        if(empty($return['shipping']) || is_null($return['shipping']) || !is_array($return['shipping']))
+        if(empty($return['shipping']) || is_null($return['shipping']) || !is_array($return['shipping'])) {
+            $return['show_shipping'] = 0;
             $return['shipping'] = array();
+        }
 
         return $return;
     }
@@ -349,9 +351,9 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
                      $postcode = $data['calc_shipping_postcode'];
                      $city     = $data['calc_shipping_city'];
 
-                     if ( $postcode && ! WC_Validation::is_postcode( $postcode, $country ) ) {
+                     if ( !empty($postcode) && ! WC_Validation::is_postcode( $postcode, $country ) ) {
                          throw new Exception( __( 'Please enter a valid postcode/ZIP.', 'woocommerce' ) );
-                     } elseif ( $postcode ) {
+                     } elseif ( !empty($postcode) ) {
                          $postcode = wc_format_postcode( $postcode, $country );
                      }
 
@@ -376,7 +378,7 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
 
         if(!is_wooapp_api_error($return)  && $has_to_return){
             WC()->session->set('wc_shipping_calculate_details',$data);
-            $return= $this->get_shipping_methods();
+            $return= $this->get_cart_items();
             $return['status'] =1;
         }
 
