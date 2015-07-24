@@ -153,6 +153,7 @@ class WOOAPP_API_AppBase extends WOOAPP_API_Resource {
     public function get_menu(){
         global $mobappSettings;
         $order=0;
+        $return['menus'] = array();
         foreach ($mobappSettings['nav_menu'] as $cat) {
             $id= $this->getUniqeId($cat['id']);
             $parent = $this->getUniqeId($cat['parent']);
