@@ -19,7 +19,7 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
     /** @var string $base the route base */
     protected $base = '/cart';
     protected $cart_object;
-
+    protected $shipping_calculated = false;
     public function __construct(WOOAPP_API_Server $server){
         parent::__construct($server);
         require_once("woocommerce-extend/class-wooapp-cart.php");
@@ -28,11 +28,13 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
         if(!isset($this->cart_object)){
              $this->cart_object = new WOOAPP_Cart();
              WC()->cart = $this->cart_object;
-             $data = WC()->session->get('wc_shipping_calculate_details');
-             if(!empty($data)){
-                 $_POST = array_merge($_POST,$data);
-                 $this->calculate_shipping($data['calc_shipping_country'],$data['calc_shipping_state'],false);
-                 $this->set_shipping_method();
+             if(!$this->shipping_calculated) {
+                 $data = WC()->session->get('wc_shipping_calculate_details');
+                 if (!empty($data)) {
+                     $_POST = array_merge($_POST, $data);
+                     $this->calculate_shipping($data['calc_shipping_country'], $data['calc_shipping_state'], false);
+                     $this->set_shipping_method();
+                 }
              }
             // WC()->customer->set_shipping_to_base();
         }
@@ -324,24 +326,47 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
     }
     public function calculate_shipping($calc_shipping_country,$calc_shipping_state,$has_to_return = true){
         $return = array();
-        $data = array('calc_shipping_country'=>$calc_shipping_country,'calc_shipping_state'=>$calc_shipping_state);
+        $data = array('calc_shipping_country'=>wc_clean($calc_shipping_country),'calc_shipping_state'=>wc_clean($calc_shipping_state));
         try {
              if(apply_filters( 'woocommerce_shipping_calculator_enable_postcode', true ) && !isset($_POST['calc_shipping_postcode'])){
                  $return = WOOAPP_API_Error::setError($return,"missing_parameter","Missing parameter calc_shipping_postcode");
-             }elseif(isset($_POST['calc_shipping_postcode']))
-                 $data['calc_shipping_postcode'] = $_POST['calc_shipping_postcode'];
+             }elseif(apply_filters( 'woocommerce_shipping_calculator_enable_postcode', true ) && isset($_POST['calc_shipping_postcode']))
+                 $data['calc_shipping_postcode'] = wc_clean($_POST['calc_shipping_postcode']);
              else
                  $data['calc_shipping_postcode'] = '';
 
              if(apply_filters( 'woocommerce_shipping_calculator_enable_city', false)  && !isset($_POST['calc_shipping_city'])){
                  $return = WOOAPP_API_Error::setError($return,"missing_parameter","Missing parameter calc_shipping_city");
-             }elseif(isset($_POST['calc_shipping_city']))
-                 $data['calc_shipping_city'] = $_POST['calc_shipping_city'];
+             }elseif(apply_filters( 'woocommerce_shipping_calculator_enable_city', false)  && isset($_POST['calc_shipping_city']))
+                 $data['calc_shipping_city'] = wc_clean($_POST['calc_shipping_city']);
              else
                  $data['calc_shipping_city'] = '';
 
-             if(!is_wooapp_api_error($return))
-                 WC_Shortcode_Cart::calculate_shipping();
+             if(!is_wooapp_api_error($return)){
+                     WC()->shipping->reset_shipping();
+                     $country  = $data['calc_shipping_country'];
+                     $state    = $data['calc_shipping_state'];
+                     $postcode = $data['calc_shipping_postcode'];
+                     $city     = $data['calc_shipping_city'];
+
+                     if ( $postcode && ! WC_Validation::is_postcode( $postcode, $country ) ) {
+                         throw new Exception( __( 'Please enter a valid postcode/ZIP.', 'woocommerce' ) );
+                     } elseif ( $postcode ) {
+                         $postcode = wc_format_postcode( $postcode, $country );
+                     }
+
+                     if ( $country ) {
+                         WC()->customer->set_location( $country, $state, $postcode, $city );
+                         WC()->customer->set_shipping_location( $country, $state, $postcode, $city );
+                     } else {
+                         WC()->customer->set_to_base();
+                         WC()->customer->set_shipping_to_base();
+                     }
+
+                     WC()->customer->calculated_shipping( true );
+                     $this->shipping_calculated = true;
+                     do_action( 'woocommerce_calculated_shipping' );
+             }
         }catch (Exception $e){
             $return = WOOAPP_API_Error::setError("unable_to_process","Unable to process");
         }
@@ -354,6 +379,7 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
             $return= $this->get_shipping_methods();
             $return['status'] =1;
         }
+
         if($has_to_return)
             return $return;
         else

@@ -22,7 +22,7 @@ class WOOAPP_API_InAppPages  extends WOOAPP_API_Resource {
         if(isset($pages[$id])){
             $return = $pages[$id];
             $return['items'] = getapi()->WOOAPP_API_Widgets->getWidgetsOfPage($id);
-
+            $return['hash'] = md5(json_encode($return['items']));
         }else{
             $return  = WOOAPP_API_Error::setError($return,"invalid_page","Invalid Page ID");
         }

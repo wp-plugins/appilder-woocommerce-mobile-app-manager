@@ -138,6 +138,9 @@ class WOOAPP_API_Authentication
             throw new Exception(__('Password is missing', 'woocommerce_mobapp'), 404);
         }
         $user = get_user_by('login', $user_username);
+        if(!$user){
+            $user = get_user_by('email', $user_username);
+        }
         if ($user && wp_check_password($user_password, $user->data->user_pass, $user->ID)) {
             $this->set_user_auth_key($user);
             return $user;
