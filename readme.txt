@@ -2,7 +2,7 @@
 Tags: appilder,woocommerce,mobile,native,app,android,ios
 Requires at least: 3.8
 Tested up to: 4.2.3
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 
 This Plugin is used to manage android and ios mobile app created for your woocommerce store at https://appilder.com/woocommerce/
 
@@ -27,6 +27,10 @@ https://appilder.com/woocommerce/docs
 2. Android & iOS App Screenshots
 
 == Changelog ==
+
+= 1.6.6 =
+* Separated Navigation Menu to new options page to fix saving issues when having many navigation items
+* Fixed cart total display issue
 
 = 1.6.4 =
 * Added API for dynamic checkout fields

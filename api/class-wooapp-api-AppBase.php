@@ -151,10 +151,10 @@ class WOOAPP_API_AppBase extends WOOAPP_API_Resource {
         return $id;
     }
     public function get_menu(){
-        global $mobappSettings;
+        global $mobappNavigationSettings;
         $order=0;
         $return['menus'] = array();
-        foreach ($mobappSettings['nav_menu'] as $cat) {
+        foreach ($mobappNavigationSettings['nav_menu'] as $cat) {
             $id= $this->getUniqeId($cat['id']);
             $parent = $this->getUniqeId($cat['parent']);
             $type =$cat['type'];
@@ -170,7 +170,7 @@ class WOOAPP_API_AppBase extends WOOAPP_API_Resource {
             );
         }
 
-        $timestamp = (isset($mobappSettings['REDUX_last_saved']) && !empty($mobappSettings['REDUX_last_saved']))?$mobappSettings['REDUX_last_saved']:"";
+        $timestamp = (isset($mobappNavigationSettings['REDUX_last_saved']) && !empty($mobappNavigationSettings['REDUX_last_saved']))?$mobappNavigationSettings['REDUX_last_saved']:"";
         $return['version'] = "$timestamp";
         return $return;
     }

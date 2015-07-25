@@ -15,7 +15,7 @@ $args = array(
     // TYPICAL -> Change these values as you need/desire
     'opt_name'          => $opt_name,            // This is where your data is stored in the database and also becomes your global variable name.
     'display_name'      => "WooCommerce Mobile App Manager",     // Name that appears at the top of your panel
-    'display_version'   => "1.6.5",  // Version that appears at the top of your panel
+    'display_version'   => "1.6.6",  // Version that appears at the top of your panel
     'menu_type'         => 'menu',                  //Specify if the admin menu should appear or not. Options: menu or submenu (Under appearance only)
     'allow_sub_menu'    => true,                    // Show the sections below the admin menu item or not
     'menu_title'        => __('Mobile App Manager', 'mobapp-settings-page'),
@@ -141,18 +141,7 @@ Redux::setSection($opt_name,array(
                 )
 ));
 
- Redux::setSection( $opt_name,array(
-                'icon'      => 'el-icon-align-left',
-                'title'     => __('Navigation Menu', 'mobapp-settings-page'),
-                'fields'    => array(
-                    array(
-                        'id'        => 'nav_menu',
-                        'type'      => 'nav_menu_builder',
-                        'title'     => __('Navigation menu', 'redux-framework-demo'),
-                        'doc'  => __('Add items to your navigation menu from the menu items.', 'redux-framework-demo'),
-                    )
-                )
-            ));
+
 
 $attrs_raw = wc_get_attribute_taxonomy_names();
 foreach($attrs_raw as $attr){
@@ -160,7 +149,7 @@ foreach($attrs_raw as $attr){
 }
 
  Redux::setSection( $opt_name,array(
-                'icon'      => 'el-icon-align-left',
+                'icon'      => 'el-icon-align-right',
                 'title'     => __('Products Filter', 'mobapp-settings-page'),
                 'fields'    => array(
                     array(
@@ -175,7 +164,6 @@ foreach($attrs_raw as $attr){
                     ),
                 )
 ));
-
  Redux::setSection( $opt_name,array(
                 'icon'      => 'el-icon-th-list',
                 'title'     => __('Widgets', 'mobapp-settings-page'),
@@ -336,7 +324,7 @@ Redux::setSection( $opt_name,array(
                 'fields'    => array(
                 ),
             ));
- Redux::setSection( $opt_name,array(
+     Redux::setSection( $opt_name,array(
                 'icon'      => 'el-icon-website',
                 'title'     => __('Home Page', 'mobapp-settings-page'),
                 'subsection'   => true,
@@ -358,7 +346,7 @@ Redux::setSection( $opt_name,array(
                         ),
                     ),
                 ),
-            ));
+     ));
             $option_name = 'inApp_pages' ;
             $pages = get_option( $option_name );
             if ( $pages !== false ) {
@@ -390,6 +378,7 @@ Redux::setSection( $opt_name,array(
                     }
                 }
             }
+
 			// Dummy section to add new In-App page
 	     Redux::setSection( $opt_name,array(
 	                'icon'      => 'el-icon-plus',
@@ -466,7 +455,12 @@ Redux::setSection($opt_name,array(
             ));
 
 
-
+Redux::setSection( $opt_name,array(
+    'icon'      => 'el-icon-align-left',
+    'title'     => __('<span class="navigation-menu-go">Navigation Menu</span>', 'mobapp-settings-page'),
+    'heading' => __('Navigation Menu', 'mobapp-settings-page'),
+    'fields'    => array(),
+));
 
 // If Redux is running as a plugin, this will remove the demo notice and links
 
@@ -490,10 +484,12 @@ if ( ! function_exists( 'wooapp_redux_remove_demo' ) ) {
     }
 }
 
-/** remove redux menu under the tools **/
-add_action( 'admin_menu', 'remove_redux_menu',12 );
-function remove_redux_menu() {
-    remove_submenu_page('tools.php','redux-about');
+if ( ! function_exists( 'remove_redux_menu' ) ) {
+    /** remove redux menu under the tools **/
+    add_action('admin_menu', 'remove_redux_menu', 12);
+    function remove_redux_menu()
+    {
+        remove_submenu_page('tools.php', 'redux-about');
+    }
 }
-
 
