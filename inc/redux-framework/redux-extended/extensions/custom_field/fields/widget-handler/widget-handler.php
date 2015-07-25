@@ -42,6 +42,8 @@ if (!class_exists('widget_handler')) {
             $this->field = $field;
             $this->value = $value;
             require_once(wooapp_path('inc/redux-framework/ReduxCore/inc/fields/select/field_select.php'));
+            include_once(ReduxFramework::$_dir. "inc/fields/media/field_media.php");
+
         }
         public function enqueue() {
             wp_enqueue_script(

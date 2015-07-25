@@ -104,7 +104,8 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
             "fees"=>$this->cart()->get_fees(),
             "currency" =>get_woocommerce_currency(),
             "currency_symbol"=>get_woocommerce_currency_symbol(),
-            "total"=>$this->cart()->cart_contents_total,
+            "total"=>$this->cart()->subtotal,
+            "cart_total"=>$this->cart()->cart_contents_total,
             "order_total"=>$this->cart()->total,
             "price_format"=>get_woocommerce_price_format(),
             'timezone'			 => wc_timezone_string(),
@@ -122,6 +123,7 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
         }else{
             $return = WOOAPP_API_Error::setError($return,"empty_cart","Cart is empty");
         }
+        wc_clear_notices();
         return $return;
     }
 
@@ -175,6 +177,7 @@ class WOOAPP_API_Cart extends WOOAPP_API_Resource {
         if(is_wooapp_api_error($return))
             return $return;
         $return = array_merge($return,$this->get_shipping_methods());
+        wc_clear_notices();
         return $return;
     }
     public function get_shipping_methods(){

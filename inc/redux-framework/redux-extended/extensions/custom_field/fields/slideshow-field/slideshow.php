@@ -298,8 +298,8 @@ if (!class_exists('ReduxFramework_slideshow')) {
         public function enqueue() {
             wp_enqueue_script(
                 'redux-field-media-js',
-                ReduxFramework::$_url . 'inc/fields/media/field_media.js',
-                array( 'redux-js','jquery' ),
+                ReduxFramework::$_url . 'assets/js/media/media.min.js',
+                array( 'jquery', 'redux-js' ),
                 time(),
                 true
             );

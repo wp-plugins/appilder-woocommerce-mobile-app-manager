@@ -206,4 +206,12 @@ jQuery(document).ready(function () {
         var currentTab  = jQuery(this).parents(".redux-group-tab");
         jQuery(currentTab).find(".form-table > tbody").append(newTr);
     });
+    jQuery(".navigation-menu-go").parent().parent("a").unbind('click');
+    jQuery(".navigation-menu-go").parent().parent("a").click(
+        function (event) {
+            event.stopImmediatePropagation();
+            event.preventDefault();
+            window.location.href = 'admin.php?page=woocommerce-mobile-app-manager-nav-menu';
+            return false;
+        });
 });

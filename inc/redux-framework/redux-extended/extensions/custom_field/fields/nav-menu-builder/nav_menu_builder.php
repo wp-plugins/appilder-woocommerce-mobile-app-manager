@@ -153,7 +153,11 @@ class ReduxFramework_nav_menu_builder
             <div style="float: left;width:100%;padding: 8px 21px 10px 6px;border: 1px solid #ccc;background: #F9F9F9" class="nav_menu_items_space">
         <?php
         if(empty($this->value) || !is_array($this->value)){
-            $this->value=$this->field['options'];
+            global $mobappSettings;
+            if(!empty($mobappSettings['nav_menu']))
+                $this->value=$mobappSettings['nav_menu'];
+            else
+                $this->value=$this->field['options'];
         }
         $this->value =$this->convertToHierarchy($this->value);
         echo '<div style="float: left;width:55%;padding: 8px 21px 10px 6px;border: 1px solid #ccc;background: #F9F9F9" class="nav_menu_items_space">';
@@ -264,6 +268,7 @@ class ReduxFramework_nav_menu_builder
 
     function enqueue()
     {
+
         wp_enqueue_style(
             'redux-field-cat-sortable-css',
             plugins_url('sortCss.css',__FILE__),
@@ -279,10 +284,11 @@ class ReduxFramework_nav_menu_builder
         wp_enqueue_script(
             'jquery-nested-cat-sortable-js',
             plugins_url('jquery.mjs.nestedSortable.js',__FILE__),
-            array('jquery','jquery-ui-accordion'),
+            array('jquery','jquery-ui-core', 'jquery-ui-accordion'),
             time(),
             true
         );
+
         wp_enqueue_script(
             'jquery-nav-builder-js',
             plugins_url('nav_menu_builder.js',__FILE__),
@@ -290,6 +296,27 @@ class ReduxFramework_nav_menu_builder
             time(),
             true
         );
+        wp_enqueue_style(
+            'redux-field-media-css',
+            ReduxFramework::$_url . 'inc/fields/media/field_media.css',
+            time(),
+            true
+        );
 
-    } }
+        wp_enqueue_style(
+            'redux-field-slideshow-css',
+            plugins_url('../slideshow-field/field_slides.css',__FILE__),
+            time(),
+            true
+        );
+
+        wp_enqueue_style(
+            'redux-field-page-builder-css',
+            plugins_url('../page-builder/page-builder.css',__FILE__),
+            time(),
+            true
+        );
+
+    }
+}
 
