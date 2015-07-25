@@ -289,6 +289,22 @@ class ReduxFramework_nav_menu_builder
             true
         );
 
+        wp_enqueue_style(
+            'select2-css',
+            '//cdn.jsdelivr.net/select2/3.5.2/select2.css',
+            array(),
+            '3.5.2',//$this->timestamp,
+            'all'
+        );
+
+        Redux_CDN::enqueue_script(
+            'select2-js',
+            '//cdn.jsdelivr.net/select2/3.5.2/select2.min.js',
+            array( 'jquery', 'redux-select2-sortable-js' ),
+            '3.5.2',
+            true
+        );
+
         wp_enqueue_script(
             'jquery-nav-builder-js',
             plugins_url('nav_menu_builder.js',__FILE__),
