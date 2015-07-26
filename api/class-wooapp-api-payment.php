@@ -16,7 +16,7 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
 
 	/** @var string $base the route base */
 	protected $base = '/payment';
-
+    protected $customer_data = [];
 	/**
 	 * Register the routes for this class
 	 *
@@ -61,11 +61,15 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
 	}
     public function checkout_fields($field){
         $checkout = WC()->checkout;
-        $return = array("status"=>true,"items"=>array());
+        $return = array("status"=>1,"items"=>array());
         if(isset($checkout->checkout_fields[$field])) {
-           $return["items"] = array_map(array($this,'parse_field'),$checkout->checkout_fields[$field],array_keys($checkout->checkout_fields[$field]));
+            $this->customer_data = getapi()->WOOAPP_API_Customers->get_customer(get_current_user_id( ));
+            if($field == "shipping" || $field == "billing")
+                $this->customer_data = $this->customer_data['customer'][$field.'_address'];
+            $this->customer_data['field'] =$field;
+            $return["items"] = array_map(array($this,'parse_field'),$checkout->checkout_fields[$field],array_keys($checkout->checkout_fields[$field]));
         }else
-            $return['status'] = false;
+            $return['status'] = 0;
         return $return;
     }
     private function parse_field($args,$key){
@@ -81,12 +85,29 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
             'options'           => array(),
             'validate'          => array(),
             'default'           => '',
+            'default_value'           => '',
         );
         $args = wp_parse_args( $args, $defaults );
         if($args['type'] == "country") {
             $args['options'] = ($key == 'shipping_country') ? WC()->countries->get_shipping_countries() : WC()->countries->get_allowed_countries();
         }
+        $args['options'] = array_map(array($this,'remove_key'),$args['options'],array_keys($args['options']));
+        if($this->customer_data['field'] == "shipping" || $this->customer_data['field'] == "billing"){
+            $key = preg_replace("/{$this->customer_data['field']}_/",'',$args['id']);
+            if(isset($this->customer_data[$key]) && !empty($this->customer_data[$key]))
+                $args['default_value'] =  $this->customer_data[$key];
+            else
+                $args['default_value'] = $args['default'];
+        }else{
+            $args['default_value'] = $args['default'];
+        }
         return $args;
+    }
+    private function remove_key($value,$key){
+        return array(
+            "id"=>$key,
+            "name"=>$value
+        );
     }
     public function  get_allowed_country_states(){
         $countries = WC()->countries->get_allowed_countries();
