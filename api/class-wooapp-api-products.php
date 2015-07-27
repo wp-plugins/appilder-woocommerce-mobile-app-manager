@@ -396,6 +396,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
 
 
         $query_args = $this->merge_query_args( $query_args, $args );
+        $query_args = apply_filters('appilder_woocommerce_product_query_args',$query_args);
 //          print_r($query_args);
         $return_products  = new  WP_Query( $query_args );
         return  ($return_products );
@@ -413,7 +414,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
         $short_desc= apply_filters( 'woocommerce_mobapp_short_description', $product->get_post_data()->post_excerpt);
         $desc  = metadata_exists( 'post', $product->id, 'wooapp_product_desc' ) ? get_post_meta( $product->id, 'wooapp_product_desc', true ) : false;
         if(empty($desc) || $desc == false) {
-            $desc = apply_filters('plugin_description', $product->get_post_data()->post_content);
+            $desc = apply_filters('appilder_woocommerce_plugin_description', $product->get_post_data()->post_content);
         }
         $desc = empty($desc)?$short_desc:$desc;
         $desc = do_shortcode($desc);
@@ -719,7 +720,6 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                         );
                     }
                 }
-
                 $attributes[] = array(
                     'id'      => $attribute['name'] ,
                     'name'      => wc_attribute_label($attribute['name']),
@@ -730,7 +730,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 );
             }
         }
-
+        $attributes = apply_filters('appilder_woocommerce_attributes',$attributes);
         return $attributes;
     }
 
