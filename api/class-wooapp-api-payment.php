@@ -61,13 +61,72 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
 	}
     public function checkout_fields($field){
         $checkout = WC()->checkout;
-        $return = array("status"=>1,"items"=>array());
+        $return = array("status"=>1,"field"=>$field,"items"=>array());
         if(isset($checkout->checkout_fields[$field])) {
             $this->customer_data = getapi()->WOOAPP_API_Customers->get_customer(get_current_user_id( ));
+            if($field == "billing"){
+                $options = get_option( 'wccs_settings' );
+                if ( count( $options['buttons'] ) > 0 && function_exists('wpml_string_wccm')) :
+                    foreach ( $options['buttons'] as $btn ) :
+                        if ( ! empty( $btn['label'] ) &&  ($btn['type'] == 'text') ) {
+                            $checkout->checkout_fields[$field][$btn['cow']] = array(
+                                'id'                => $btn['cow'],
+                                'type'          => 'text',
+                                'class'         => array('wccs-field-class wccs-form-row-wide'),
+                                'label'         =>  wpml_string_wccm(''.$btn['label'].''),
+                                'required'  => $btn['checkbox'],
+                                'placeholder'       => wpml_string_wccm(''.$btn['placeholder'].''),
+                                'default'           => $checkout->get_value( ''.$btn['cow'].'' ),
+                            );
+                        }
+                        if ( ! empty( $btn['label'] ) &&  ($btn['type'] == 'select') ) {
+                            $checkout->checkout_fields[$field][$btn['cow']] = array(
+                                'id'                => $btn['cow'],
+                                'type'          => 'select',
+                                'class'         => array('wccs-field-class wccs-form-row-wide'),
+                                'label'         =>  wpml_string_wccm(''.$btn['label'].''),
+                                'options'     => array(
+                                    '' => __('Select below', 'woocommerce-checkout-manager' ),
+                                    ''.wpml_string_wccm(''.$btn['option_a'].'').'' => ''.wpml_string_wccm(''.$btn['option_a'].'').'',
+                                    ''.wpml_string_wccm(''.$btn['option_b'].'').'' => ''.wpml_string_wccm(''.$btn['option_b'].'').''
+                                ),
+                                'required'  => $btn['checkbox'],
+                                'placeholder'       => wpml_string_wccm(''.$btn['placeholder'].''),
+                                'default'           => $checkout->get_value( ''.$btn['cow'].'' ),
+                            );
+                        }
+
+                        if ( ! empty( $btn['label'] ) &&  ($btn['type'] == 'date') ) {
+                            $checkout->checkout_fields[$field][$btn['cow']] = array(
+                                'id'                => $btn['cow'],
+                                'type'          => 'text',
+                                'class'         => array('wccs-field-class MyDate-'.$btn['cow'].' wccs-form-row-wide'),
+                                'label'         =>  wpml_string_wccm(''.$btn['label'].''),
+                                'required'  => $btn['checkbox'],
+                                'placeholder'       => wpml_string_wccm(''.$btn['placeholder'].''),                                'default'           => $checkout->get_value( ''.$btn['cow'].'' ),
+                                'default'           => $checkout->get_value( ''.$btn['cow'].'' ),
+                            );
+                        }
+
+                        if ( ! empty( $btn['label'] ) &&  ($btn['type'] == 'checkbox') ) {
+                            $checkout->checkout_fields[$field][$btn['cow']] = array(
+                                'id'                => $btn['cow'],
+                                'type'          => 'checkbox',
+                                'class'         => array('wccs-field-class wccs-form-row-wide'),
+                                'label'         =>  wpml_string_wccm(''.$btn['label'].''),
+                                'required'  => $btn['checkbox'],
+                                'placeholder'       => wpml_string_wccm(''.$btn['placeholder'].''),
+                                'default'           => $checkout->get_value( ''.$btn['cow'].'' ),
+                            );
+                         }
+                    endforeach;
+                endif;
+            }
             if($field == "shipping" || $field == "billing")
                 $this->customer_data = $this->customer_data['customer'][$field.'_address'];
             $this->customer_data['field'] =$field;
             $return["items"] = array_map(array($this,'parse_field'),$checkout->checkout_fields[$field],array_keys($checkout->checkout_fields[$field]));
+            $return = apply_filters("appilder_woocommerce_checkout_fields",$return);
         }else
             $return['status'] = 0;
         return $return;
@@ -95,12 +154,13 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
         if($this->customer_data['field'] == "shipping" || $this->customer_data['field'] == "billing"){
             $key = preg_replace("/{$this->customer_data['field']}_/",'',$args['id']);
             if(isset($this->customer_data[$key]) && !empty($this->customer_data[$key]))
-                $args['default_value'] =  $this->customer_data[$key];
+                $args['default_value'] =  !is_null($this->customer_data[$key])?$this->customer_data[$key]:'';
             else
-                $args['default_value'] = $args['default'];
+                $args['default_value'] = !is_null($args['default'])?$args['default']:'';
         }else{
             $args['default_value'] = $args['default'];
         }
+        $args['default'] = is_null($args['default'])?'':$args['default'];
         return $args;
     }
     private function remove_key($value,$key){
