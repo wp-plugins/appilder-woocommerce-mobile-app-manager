@@ -16,7 +16,7 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
 
 	/** @var string $base the route base */
 	protected $base = '/payment';
-    protected $customer_data = [];
+    protected $customer_data = array();
 	/**
 	 * Register the routes for this class
 	 *
@@ -86,7 +86,6 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
                                 'class'         => array('wccs-field-class wccs-form-row-wide'),
                                 'label'         =>  wpml_string_wccm(''.$btn['label'].''),
                                 'options'     => array(
-                                    '' => __('Select below', 'woocommerce-checkout-manager' ),
                                     ''.wpml_string_wccm(''.$btn['option_a'].'').'' => ''.wpml_string_wccm(''.$btn['option_a'].'').'',
                                     ''.wpml_string_wccm(''.$btn['option_b'].'').'' => ''.wpml_string_wccm(''.$btn['option_b'].'').''
                                 ),
