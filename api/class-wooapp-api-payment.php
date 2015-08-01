@@ -86,13 +86,20 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
                                 'class'         => array('wccs-field-class wccs-form-row-wide'),
                                 'label'         =>  wpml_string_wccm(''.$btn['label'].''),
                                 'options'     => array(
-                                    ''.wpml_string_wccm(''.$btn['option_a'].'').'' => ''.wpml_string_wccm(''.$btn['option_a'].'').'',
-                                    ''.wpml_string_wccm(''.$btn['option_b'].'').'' => ''.wpml_string_wccm(''.$btn['option_b'].'').''
-                                ),
+                                 ),
                                 'required'  => $btn['checkbox'],
                                 'placeholder'       => wpml_string_wccm(''.$btn['placeholder'].''),
                                 'default'           => $checkout->get_value( ''.$btn['cow'].'' ),
                             );
+
+                            if(isset($btn['option_a']) && !empty($btn['option_a']))
+                                $checkout->checkout_fields[$field][$btn['cow']]['options'][''.wpml_string_wccm(''.$btn['option_a'].'').''] = ''.wpml_string_wccm(''.$btn['option_a'].'').'';
+                            if(isset($btn['option_b']) && !empty($btn['option_b']))
+                                $checkout->checkout_fields[$field][$btn['cow']]['options'][''.wpml_string_wccm(''.$btn['option_b'].'').''] = ''.wpml_string_wccm(''.$btn['option_b'].'').'';
+                            if(isset($btn['option_c']) && !empty($btn['option_c']))
+                                $checkout->checkout_fields[$field][$btn['cow']]['options'][''.wpml_string_wccm(''.$btn['option_c'].'').''] = ''.wpml_string_wccm(''.$btn['option_c'].'').'';
+                            if(isset($btn['option_d']) && !empty($btn['option_d']))
+                                $checkout->checkout_fields[$field][$btn['cow']]['options'][''.wpml_string_wccm(''.$btn['option_d'].'').''] = ''.wpml_string_wccm(''.$btn['option_d'].'').'';
                         }
 
                         if ( ! empty( $btn['label'] ) &&  ($btn['type'] == 'date') ) {
@@ -102,7 +109,7 @@ class WOOAPP_API_Payment extends WOOAPP_API_Resource {
                                 'class'         => array('wccs-field-class MyDate-'.$btn['cow'].' wccs-form-row-wide'),
                                 'label'         =>  wpml_string_wccm(''.$btn['label'].''),
                                 'required'  => $btn['checkbox'],
-                                'placeholder'       => wpml_string_wccm(''.$btn['placeholder'].''),                                'default'           => $checkout->get_value( ''.$btn['cow'].'' ),
+                                'placeholder'       => wpml_string_wccm(''.$btn['placeholder'].''),
                                 'default'           => $checkout->get_value( ''.$btn['cow'].'' ),
                             );
                         }

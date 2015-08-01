@@ -41,7 +41,7 @@ abstract class WOOAPP_Widget_Handler {
             ),
             "value" => array(
                 "title" => isset($item['title'])?$item['title']:"",
-                "content"=>$item['content']
+                "content"=>do_shortcode($item['content'])
             )
         );
         return $return;

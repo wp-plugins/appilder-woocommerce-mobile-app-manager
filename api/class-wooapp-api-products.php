@@ -450,7 +450,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 // 'tags'               => wp_get_post_terms( $product->id, 'product_tag', array( 'fields' => 'names' ) ),
                 'featured_src'       => $image,
                 //@todo Make this selectable from dashboard
-                // 'attributes'         => $this->get_attributes( $product ,true),
+                 'attributes'         => $this->get_attributes( $product),
             );
         }else{
             $return = array(

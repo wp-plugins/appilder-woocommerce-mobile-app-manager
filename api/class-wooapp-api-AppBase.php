@@ -182,6 +182,8 @@ class WOOAPP_API_AppBase extends WOOAPP_API_Resource {
             wp_set_auth_cookie(get_current_user_id());
             wp_redirect($hash);
             exit;
+        }else{
+            wp_redirect($hash);
         }
     }
     /**
