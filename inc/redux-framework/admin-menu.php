@@ -15,12 +15,11 @@ $args = array(
     // TYPICAL -> Change these values as you need/desire
     'opt_name'          => $opt_name,            // This is where your data is stored in the database and also becomes your global variable name.
     'display_name'      => "WooCommerce Mobile App Manager",     // Name that appears at the top of your panel
-    'display_version'   => "1.6.8.1",  // Version that appears at the top of your panel
+    'display_version'   => "1.6.8.2",  // Version that appears at the top of your panel
     'menu_type'         => 'menu',                  //Specify if the admin menu should appear or not. Options: menu or submenu (Under appearance only)
     'allow_sub_menu'    => true,                    // Show the sections below the admin menu item or not
     'menu_title'        => __('Mobile App Manager', 'mobapp-settings-page'),
     'page_title'        => __('WooCommerce Mobile App Manager', 'mobapp-settings-page'),
-
     // You will need to generate a Google API key to use this feature.
     // Please visit: https://developers.google.com/fonts/docs/developer_api#Auth
     'google_api_key' => 'AIzaSyAR4MRPWJvIC64kSbq0aTYM8VwbKGi-RYs', // Must be defined to add google fonts to the typography module,
