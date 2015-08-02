@@ -450,7 +450,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 // 'tags'               => wp_get_post_terms( $product->id, 'product_tag', array( 'fields' => 'names' ) ),
                 'featured_src'       => $image,
                 //@todo Make this selectable from dashboard
-                 'attributes'         => $this->get_attributes( $product),
+                 'attributes_array'         => $this->get_attributes( $product),
             );
         }else{
             $return = array(
@@ -579,7 +579,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 'shipping_class'    => $variation->get_shipping_class(),
                 'shipping_class_id' => ( 0 !== $variation->get_shipping_class_id() ) ? $variation->get_shipping_class_id() : null,
                 'image'             => $this->get_images( $variation ),
-                'attributes_array'        => $this->get_attributes( $variation ),
+                'attributes'        => $this->get_attributes( $variation ),
                 'downloads'         => $this->get_downloads( $variation ),
                 'download_limit'    => (int) $product->download_limit,
                 'download_expiry'   => (int) $product->download_expiry,
