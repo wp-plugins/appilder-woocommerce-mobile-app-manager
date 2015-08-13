@@ -15,9 +15,11 @@ class WOOAPP_API_pushNotification  extends WOOAPP_API_Resource {
         $routes[$this->base . '/gcm/register'] = array(
             array(array($this, 'gcm_register'), WOOAPP_API_Server::METHOD_POST),
         );
+
         $routes[$this->base . '/gcm/remove'] = array(
             array(array($this, 'gcm_remove'), WOOAPP_API_Server::METHOD_POST),
         );
+
         $routes[$this->base . '/send'] = array(
             array(array($this, 'send'), WOOAPP_API_Server::METHOD_POST),
         );
@@ -26,14 +28,15 @@ class WOOAPP_API_pushNotification  extends WOOAPP_API_Resource {
 
     /**
      * @param $id
+     * @param  $type
      * @return array
      */
-    public function gcm_register($id)
+    public function gcm_register($id,$type = 1)
     {
         if (!is_a($this->pushNotification, "WOOAPP_API_Core_pushNotification"))
             $this->pushNotification = new WOOAPP_API_Core_pushNotification();
         $return = array();
-        if ($this->pushNotification->register($id, WOOAPP_API_Core_pushNotification::$gcm))
+        if ($this->pushNotification->register($id, $type))
             $return['status'] = 1;
         else
            $return = WOOAPP_API_Error::setError($return, "push_notification_already_registered", "Device already registered");

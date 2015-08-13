@@ -154,20 +154,26 @@ class WOOAPP_API_AppBase extends WOOAPP_API_Resource {
         global $mobappNavigationSettings;
         $order=0;
         $return['menus'] = array();
-        foreach ($mobappNavigationSettings['nav_menu'] as $cat) {
-            $id= $this->getUniqeId($cat['id']);
-            $parent = $this->getUniqeId($cat['parent']);
-            $type =$cat['type'];
-            $return['menus'][] = array(
-                'remoteId' => (int)$id,
-                'name' => $cat['label'],
-                'parent' => (int)$parent,
-                'value' => $cat['value'],
-                'taxonomy' => $cat['type'],
-                'order'=>$order++,
-                'icon' => (isset($cat['media_url']))?$cat['media_url']:"",
-                'menu_type'=>isset($this->menuTypes[$type])?$this->menuTypes[$type]:null,
-            );
+        if(empty($mobappNavigationSettings['nav_menu'])){
+            require_once('wp-content/plugins/woocommerce-mobile-app-manager/inc/redux-framework/redux-extended/extensions/custom_field/fields/nav-menu-builder/nav_menu_builder.php');
+            $mobappNavigationSettings['nav_menu'] = ReduxFramework_nav_menu_builder::get_default();
+        }
+        if(!empty($mobappNavigationSettings['nav_menu']) && is_array($mobappNavigationSettings['nav_menu'])) {
+            foreach ($mobappNavigationSettings['nav_menu'] as $cat) {
+                $id = $this->getUniqeId($cat['id']);
+                $parent = $this->getUniqeId($cat['parent']);
+                $type = $cat['type'];
+                $return['menus'][] = array(
+                    'remoteId' => (int)$id,
+                    'name' => $cat['label'],
+                    'parent' => (int)$parent,
+                    'value' => $cat['value'],
+                    'taxonomy' => $cat['type'],
+                    'order' => $order++,
+                    'icon' => (isset($cat['media_url'])) ? $cat['media_url'] : "",
+                    'menu_type' => isset($this->menuTypes[$type]) ? $this->menuTypes[$type] : null,
+                );
+            }
         }
 
         $timestamp = (isset($mobappNavigationSettings['REDUX_last_saved']) && !empty($mobappNavigationSettings['REDUX_last_saved']))?$mobappNavigationSettings['REDUX_last_saved']:"";

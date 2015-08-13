@@ -430,9 +430,9 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 'permalink'          => $product->get_permalink(),
                 'downloadable'       => $product->is_downloadable(),
                 'virtual'            => $product->is_virtual(),
-                'price'              => WC_format_decimal( $product->get_price(), 2 ),
-                'regular_price'      => WC_format_decimal( $product->get_regular_price(), 2 ),
-                'sale_price'         => $product->get_sale_price() ? WC_format_decimal( $product->get_sale_price(), 2 ) : null,
+                'price'              => self::price( $product->get_price() ),
+                'regular_price'      => self::price( $product->get_regular_price()),
+                'sale_price'         => $product->get_sale_price() ? self::price( $product->get_sale_price()) : null,
                 'price_html'         => $product->get_price_html(),
                 // 'managing_stock'     => $product->managing_stock(),
                 // 'stock_quantity'     => (int) $product->get_stock_quantity(),
@@ -464,9 +464,9 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 'virtual'            => $product->is_virtual(),
                 'permalink'          => $product->get_permalink(),
                 'sku'                => $product->get_sku(),
-                'price'              => WC_format_decimal( $product->get_price(), 2 ),
-                'regular_price'      => WC_format_decimal( $product->get_regular_price(), 2 ),
-                'sale_price'         => $product->get_sale_price() ? WC_format_decimal( $product->get_sale_price(), 2 ) : null,
+                'price'              => self::price( $product->get_price()),
+                'regular_price'      => self::price( $product->get_regular_price()),
+                'sale_price'         => $product->get_sale_price() ? self::price( $product->get_sale_price() ) : null,
                 'price_html'         => $product->get_price_html(),
                // 'taxable'            => $product->is_taxable(),
                // 'tax_status'         => $product->get_tax_status(),
@@ -557,9 +557,9 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
                 'virtual'           => $variation->is_virtual(),
                 'permalink'         => $variation->get_permalink(),
                 'sku'               => $variation->get_sku(),
-                'price'             => WC_format_decimal( $variation->get_price(), 2 ),
-                'regular_price'     => WC_format_decimal( $variation->get_regular_price(), 2 ),
-                'sale_price'        => $variation->get_sale_price() ? WC_format_decimal( $variation->get_sale_price(), 2 ) : null,
+                'price'             => self::price( $variation->get_price() ),
+                'regular_price'     => self::price( $variation->get_regular_price()),
+                'sale_price'        => $variation->get_sale_price() ? self::price( $variation->get_sale_price()) : null,
                 'taxable'           => $variation->is_taxable(),
                 'tax_status'        => $variation->get_tax_status(),
                 'tax_class'         => $variation->get_tax_class(),
@@ -653,7 +653,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
             $images[] = WC_placeholder_img_src();
         }
 
-        return $images;
+        return apply_filters('appilder_woocommerce_product_images',$images);
     }
 
     /**
@@ -760,5 +760,24 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
 
         return $downloads;
     }
+    public static function price($price,$args=array()){
+        extract( apply_filters( 'wc_price_args', wp_parse_args( $args, array(
+            'ex_tax_label'       => false,
+            'currency'           => '',
+            'decimal_separator'  => wc_get_price_decimal_separator(),
+            'thousand_separator' => wc_get_price_thousand_separator(),
+            'decimals'           => wc_get_price_decimals(),
+            'price_format'       => get_woocommerce_price_format()
+        ) ) ) );
 
+        $negative        = $price < 0;
+        $price           = apply_filters( 'raw_woocommerce_price', floatval( $negative ? $price * -1 : $price ) );
+        $price           = apply_filters( 'formatted_woocommerce_price', number_format( $price, $decimals, $decimal_separator, $thousand_separator ), $price, $decimals, $decimal_separator, $thousand_separator );
+
+        if ( apply_filters( 'woocommerce_price_trim_zeros', false ) && $decimals > 0 ) {
+            $price = wc_trim_zeros( $price );
+        }
+
+        return $price;
+    }
 }
