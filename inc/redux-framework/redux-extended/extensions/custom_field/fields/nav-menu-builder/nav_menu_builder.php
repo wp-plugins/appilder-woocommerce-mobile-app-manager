@@ -15,29 +15,6 @@ class ReduxFramework_nav_menu_builder
         $this->field = $field;
 		$this->value = $value;
         include_once(ReduxFramework::$_dir. "inc/fields/media/field_media.php");
-        $args = array(
-            'taxonomy' => 'product_cat',
-            'orderby' => 'id',
-            'show_count' => true,
-            'pad_counts' => true,
-            'hierarchical' => true,
-            'title_li' => '',
-            'hide_empty' => false
-        );
-        $catTerms = get_categories($args);
-        $sortable = array();
-        foreach($catTerms as $cat){
-            $sortable[] = array(
-                'id'=> 'cat_'.$cat->term_id,
-                'parent'=>'cat_'.$cat->parent,
-                'label' => $cat->cat_name,
-                'label_value' => $cat->cat_name,
-                'type' => 'cat',
-                'value' => $cat->term_id,
-                'taxonomy'=>$cat->taxonomy
-            );
-        }
-        $this->field['options'] = $sortable;
         $this->widget_handler = new widget_handler($this->field,$this->value,$this->parent);
         $this->media_field = new ReduxFramework_media(array(
             'id'       => $this->field['id'],
@@ -134,6 +111,33 @@ class ReduxFramework_nav_menu_builder
         </div>
         <?php
     }
+
+    public  static  function get_default(){
+        $args = array(
+            'taxonomy' => 'product_cat',
+            'orderby' => 'id',
+            'show_count' => true,
+            'pad_counts' => true,
+            'hierarchical' => true,
+            'title_li' => '',
+            'hide_empty' => false
+        );
+
+        $catTerms = get_categories($args);
+        $sortable = array();
+        foreach($catTerms as $cat){
+            $sortable[] = array(
+                'id'=> 'cat_'.$cat->term_id,
+                'parent'=>'cat_'.$cat->parent,
+                'label' => $cat->cat_name,
+                'label_value' => $cat->cat_name,
+                'type' => 'cat',
+                'value' => $cat->term_id,
+                'taxonomy'=>$cat->taxonomy
+            );
+        }
+        return $sortable;
+    }
     /**
      * Field Render Function.
      *
@@ -159,7 +163,12 @@ class ReduxFramework_nav_menu_builder
             else
                 $this->value=$this->field['options'];
         }
-        $this->value =$this->convertToHierarchy($this->value);
+        if(empty($this->value)){
+            $this->value = self::get_default();
+        }
+
+        $this->value =self::convertToHierarchy($this->value);
+
         echo '<div style="float: left;width:55%;padding: 8px 21px 10px 6px;border: 1px solid #ccc;background: #F9F9F9" class="nav_menu_items_space">';
         echo '<h3>Navigation Menu<br><span style="font-size: small;font-weight: normal">Drag and drop elements to change hierarchy</span></h3>';
 	    $this->printMenu($this->value);
@@ -230,7 +239,7 @@ class ReduxFramework_nav_menu_builder
         echo "\n</ol>";
     }
 
-    function convertToHierarchy($results, $idField='id', $parentIdField='parent', $childrenField='childNodes') {
+    public  static function convertToHierarchy($results, $idField='id', $parentIdField='parent', $childrenField='childNodes') {
         $hierarchy = array(); // -- Stores the final data
 
         $itemReferences = array(); // -- temporary array, storing references to all items in a single-dimention

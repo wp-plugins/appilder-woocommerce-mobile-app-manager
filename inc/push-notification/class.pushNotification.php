@@ -1,6 +1,7 @@
 <?php
 class WOOAPP_API_Core_pushNotification {
     static $gcm = 1;
+    static $apns = 2;
     static $services ;
     static  $table,$history_table;
     static function init(){

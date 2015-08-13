@@ -129,7 +129,7 @@ if (!class_exists('ReduxFramework_slides_search')) {
                 echo '<div class="redux-slideshow-accordion-group"><fieldset class="redux-field" data-id="'.$this->field['id'].'"><h3><span class="redux-slideshow-header">'. __($this->titles['new_slide'], 'redux-framework').'</span></h3><div>';
                 echo '<ul id="' . $this->field['id'] . '-ul" class="redux-slideshow-list">';
                 $placeholder = (isset($this->field['placeholder']['title'])) ? esc_attr($this->field['placeholder']['title']) : __( 'Title', 'redux-framework' );
-                echo '<li><input type="text" id="' . $this->field['id'] . '-title_' . $x . '" name="' . $this->field['name'] . '[' . $x . '][title]" value="" placeholder="'.$placeholder.'" class="full-text slide-title" /></li>';
+                echo '<li><input type="text" id="' . $this->field['id'] . '-title_' . $x . '" name="' . $this->field['name'] . '[' . $x . '][title]" value="Search" placeholder="'.$placeholder.'" class="full-text slide-title" /></li>';
                 echo '<li style="display:none" class="widget-search-action widget-action-value-field" data-name="' . $this->field['name'] . '[' . $x . '][click_action_value][]" data-value="" data-id="' . $this->field['name'] . '-' . $x . '-click_action_value"></li>';
                 //    echo '<li>';
           //      $this->widget_field(widget_handler::$category_selector,false,array("multi"=>true,"sortable"=>false,"width"=>"80","name"=>$this->field['name'] . '[' . $x . '][products]',"id"=>$this->field['id'] . '-' . $x . '-click_action_value','title'=>"Products","class"=>"select2"));

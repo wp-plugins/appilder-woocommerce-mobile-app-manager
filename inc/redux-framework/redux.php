@@ -5,6 +5,12 @@
  */
 if (!defined('ABSPATH')) exit;
 
+function appilder_woocommerce_upload_mimes( $existing_mimes ) {
+    $existing_mimes['pem'] = 'application/x-pem-file';
+    return $existing_mimes;
+}
+add_filter( 'mime_types', 'appilder_woocommerce_upload_mimes' );
+
 require_once('redux-extended/loader.php');
 if ( !class_exists( 'ReduxFramework' ) ) {
     require_once( 'ReduxCore/framework.php' );

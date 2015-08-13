@@ -15,7 +15,7 @@ $args = array(
     // TYPICAL -> Change these values as you need/desire
     'opt_name'          => $opt_name,            // This is where your data is stored in the database and also becomes your global variable name.
     'display_name'      => "WooCommerce Mobile App Manager",     // Name that appears at the top of your panel
-    'display_version'   => "1.6.8.4",  // Version that appears at the top of your panel
+    'display_version'   => "1.6.8.5",  // Version that appears at the top of your panel
     'menu_type'         => 'menu',                  //Specify if the admin menu should appear or not. Options: menu or submenu (Under appearance only)
     'allow_sub_menu'    => true,                    // Show the sections below the admin menu item or not
     'menu_title'        => __('Mobile App Manager', 'mobapp-settings-page'),
@@ -397,7 +397,22 @@ Redux::setSection($opt_name,array(
                         'type'    => 'text',
                         'title'   => 'GCM Auth Key',
                         'desc'    => 'Enter your GCM Auth Key',
+                    ),
+/*                    array(
+                        'id'      => 'apns_passphrase',
+                        'type'    => 'text',
+                        'title'   => 'APNS Pass Phrase',
+                        'desc'    => 'Enter APNS Pass Phrase',
+                    ),
+                    array(
+                        'id'      => 'apns_cert',
+                        'type'    => 'media',
+                        // 'mode' => 'application/x-pem-file',
+                        'library_filter'=>array('pem'),
+                        'title'   => 'APNS Pass Phrase',
+                        'desc'    => 'Enter APNS Pass Phrase',
                     )
+*/
                 ),
             ));
 
