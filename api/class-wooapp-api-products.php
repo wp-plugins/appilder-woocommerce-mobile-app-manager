@@ -653,7 +653,7 @@ class WOOAPP_API_Products extends WOOAPP_API_Resource {
             $images[] = WC_placeholder_img_src();
         }
 
-        return apply_filters('appilder_woocommerce_product_images',$images);
+        return apply_filters('appilder_woocommerce_product_images',$images,$product);
     }
 
     /**
